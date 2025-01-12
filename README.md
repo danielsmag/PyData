@@ -16,6 +16,8 @@ project/
 │ 
 ├─── .harness #Automation directory **Do not Delete**
 │ 
+├─── platform #Contains the library harness-info.yaml **Do not Delete**
+│ 
 ├── src/
 │   └── template/ #Contains all the library files
 │       

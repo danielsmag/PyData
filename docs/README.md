@@ -1,7 +1,8 @@
+# Python Library Template Documentation
 ## Getting Started
 
 ## Overview
-This project is a FastAPI application developed by **Michael Liav** from the Platform Team. It serves as a web application with a focus on providing a robust API and a user-friendly interface.
+This project is example library developed by **Michael Liav** from the Platform Team. It releases a simple package for python which recives a name as input and prints Hello {name}
 
 
 # Getting started
@@ -13,22 +14,16 @@ This project is a FastAPI application developed by **Michael Liav** from the Pla
 ```bash
 project/
 │ 
-├───.harness #Automation directory **Do not Delete**
-│
-├───assets
-│   └───swagger-ui 
-│
-├───docs #Documentation directory
-│
-├───middlewares
-│   └──whitelist_middleware.py #Whitelist middeware
-│
-├───platform # Contains all file related to infra and harness **Do not Delete**
-│   
-├───routes
-│   └───api.py #Routes file contains all health checks
+├─── .harness #Automation directory **Do not Delete**
 │ 
-└───tests #Test directory
+├─── platform #Contains the library harness-info.yaml **Do not Delete**
+│ 
+├── src/
+│   └── template/ #Contains all the library files
+│       
+├── tests/ #Test directory
+│   
+├── pyproject.toml #Project toml for releasing package
 ```
 ## Installation
 
@@ -43,14 +38,9 @@ cd your_project
 pip install -r requirements.txt --index-url https://jfrog-platform.shared.migdal-group.co.il/artifactory/api/pypi/pythonvirtual/simple
 ```
 
-## Running The Project
-```bash
-uvicorn main:app --port 7860
-```
-
 ## Running Coverage
 ```bash
-pytest --junitxml=report.xml --cov=. --cov-report=term ./tests
+pytest --junitxml=report.xml --cov=. --cov-report=xml --cov-report=html ./tests
 ```
 ## Running Quality Checks
 ## Isort
@@ -88,12 +78,14 @@ pylint .
 # Configure Project Properties
 Update mkdocs.yaml
 ```yaml
-site_name: migdal.platform.templates.java17.lib //Project Name
+site_name: migdal.platform.templates.lib.python //Project Name
 
 nav:
-  - Home: README.md //Update to relevant project docs you have added
-  // Example
-  - Getting started: start.md
+  - Home: README.md 
+  - CHANGELOG: CHANGELOG.md
+  //Update to relevant project docs you have added
+  // Example  
+  - example: example.md
     
 plugins:
   - techdocs-core
