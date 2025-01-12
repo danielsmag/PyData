@@ -1,0 +1,9 @@
+setuptools
+wheel
+twine
+python-dotenv
+isort==5.13.2
+pylint==3.3.3
+black==24.10.0
+pytest
+pytest-cov

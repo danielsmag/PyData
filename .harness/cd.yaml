@@ -1,0 +1,18 @@
+pipeline:
+  projectIdentifier: templates
+  orgIdentifier: Platform
+  tags: {}
+  properties:
+    ci:
+      codebase:
+        repoName: migdal.platform.templates.lib.python
+        build: <+input>
+  stages:
+    - stage:
+        name: Deploy
+        identifier: Deploy
+        template:
+          templateRef: account.Publish_python_lib
+          versionLabel: 1.0.0
+  identifier: CDtemplate
+  name: CD-template       

@@ -1,0 +1,19 @@
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  namespace: default
+  name: migdal.platform.templates.lib.python
+  annotations:
+    sonarqube.org/project-key: migdal.platform.templates.lib.python
+    backstage.io/techdocs-ref: dir:../
+  description: My Sample service.
+  tags:
+    - my-sample
+  links:
+    - title: Website
+      url: http://my-sample-website.com
+spec:
+  type: Library
+  owner: my-sample-team
+  lifecycle: experimental
+  system: my-sample-system

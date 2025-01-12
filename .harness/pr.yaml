@@ -1,0 +1,69 @@
+pipeline:
+  projectIdentifier: templates
+  orgIdentifier: Platform
+  properties:
+    ci:
+      codebase:
+        repoName: migdal.platform.templates.lib.python
+        build: <+input>
+        depth: 0
+  stages:
+    - stage:
+        name: build
+        identifier: build
+        template:
+          templateRef: account.python_pr_template
+          versionLabel: 1.0.0
+    - stage:
+        name: Update
+        identifier: Update
+        description: ""
+        type: Custom
+        spec:
+          execution:
+            steps:
+              - step:
+                  type: Email
+                  name: Update
+                  identifier: Update
+                  spec:
+                    to: <+pipeline.variables.email>
+                    cc: ""
+                    subject: "<+pipeline.name> failed "
+                    body: |
+                      Hi,
+                      The pr form branch <+pipeline.variables.sourceBranch> to branch <+pipeline.variables.targetBranch> with the title: <+pipeline.variables.prTitle> and the pr number of <+pipeline.variables.prNumber> failed!
+                      Link to the pr
+                      https://migdal.harness.io/ng/account/NmRjYjU0MzgtMTQ2MS00ZW/module/code/orgs/<+org.name>/projects/<+project.name>/repos/<+pipeline.properties.ci.codebase.repoName>/pulls/<+pipeline.variables.prNumber>
+                  timeout: 10m
+        tags: {}
+        when:
+          pipelineStatus: Failure
+  variables:
+    - name: prNumber
+      type: String
+      description: ""
+      required: false
+      value: <+input>
+    - name: prTitle
+      type: String
+      description: ""
+      required: false
+      value: <+input>
+    - name: sourceBranch
+      type: String
+      description: ""
+      required: false
+      value: <+input>
+    - name: targetBranch
+      type: String
+      description: ""
+      required: false
+      value: <+input>
+    - name: email
+      type: String
+      description: ""
+      required: false
+      value: <+input>
+  identifier: pr_template
+  name: pr_template

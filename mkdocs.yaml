@@ -1,0 +1,11 @@
+site_name: migdal.platform.templates.lib.python //Project Name
+
+nav:
+  - Home: README.md 
+  - CHANGELOG: CHANGELOG.md
+  //Update to relevant project docs you have added
+  // Example  
+  - example: example.md
+    
+plugins:
+  - techdocs-core
