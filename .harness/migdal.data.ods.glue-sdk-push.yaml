@@ -1,0 +1,16 @@
+inputSet:
+    name: push
+    tags: {}
+    identifier: push
+    orgIdentifier: Data
+    projectIdentifier: Ods
+    pipeline:
+      identifier: migdaldataodsgluesdkCI
+      properties:
+        ci:
+          codebase:
+            build:
+              type: branch
+              spec:
+                branch: main
+      
