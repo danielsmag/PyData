@@ -1,11 +1,11 @@
 pipeline:
-  projectIdentifier: templates
-  orgIdentifier: Platform
+  projectIdentifier: Ods
+  orgIdentifier: Data
   tags: {}
   properties:
     ci:
       codebase:
-        repoName: migdal.platform.templates.lib.python
+        repoName: migdal.data.ods.glue-sdk
         build: <+input>
   stages:
     - stage:
@@ -20,11 +20,11 @@ pipeline:
         description: ""
         type: Pipeline
         spec:
-          org: Platform
-          pipeline: CDlibtemplate
-          project: templates
+          org: Data
+          pipeline: migdaldataodsgluesdkCD
+          project: Ods
           inputs:
-            identifier: CDlibtemplate
+            identifier: migdaldataodsgluesdkCD
             properties:
               ci:
                 codebase:
@@ -32,5 +32,5 @@ pipeline:
                     spec:
                       branch: main
                     type: branch
-  name: CI-lib-template
-  identifier: CIlibtemplate
+  name: migdal.data.ods.glue-sdk-CI
+  identifier: migdaldataodsgluesdkCI

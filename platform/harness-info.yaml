@@ -1,19 +1,26 @@
+
 apiVersion: backstage.io/v1alpha1
 kind: Component
 metadata:
   namespace: default
-  name: migdal.platform.templates.lib.python
+  name: migdal.data.ods.glue-sdk
   annotations:
-    sonarqube.org/project-key: migdal.platform.templates.lib.python
     backstage.io/techdocs-ref: dir:../
-  description: My Sample service.
+    sonarqube.org/project-key: migdal.data.ods.glue-sdk
+    harness.io/pipelines: |
+      ci: https://migdal.harness.io/ng/account/NmRjYjU0MzgtMTQ2MS00ZW/module/ci/orgs/Data/projects/Ods/pipelines/migdaldataodsglue.sdkCI/pipeline-studio/?storeType=REMOTE&connectorRef=&repoName=migdal.data.ods.glue-sdk&branch=main
+      cd: https://migdal.harness.io/ng/account/NmRjYjU0MzgtMTQ2MS00ZW/module/ci/orgs/Data/projects/Ods/pipelines/migdaldataodsglue.sdkCD/pipeline-studio/?storeType=REMOTE&connectorRef=&repoName=migdal.data.ods.glue-sdk&branch=main
+      pr: https://migdal.harness.io/ng/account/NmRjYjU0MzgtMTQ2MS00ZW/module/ci/orgs/Data/projects/Ods/pipelines/migdaldataodsglue.sdkPR/pipeline-studio/?storeType=REMOTE&connectorRef=&repoName=migdal.data.ods.glue-sdk&branch=main
+  description: A library that extends the aws glue sdk capabilties
   tags:
-    - my-sample
+    - data
   links:
-    - title: Website
-      url: http://my-sample-website.com
+   - title: Sonarqube
+     icon: sonarqube
+     url: https://sonarqube-platform.shared.migdal-group.co.il/dashboard?id=migdal.data.ods.glue-sdk&codeScope=overall
 spec:
-  type: Library
-  owner: my-sample-team
+  type: library
+  owner: Harness_Data_Ods-Developer
   lifecycle: experimental
-  system: my-sample-system
+  system: system:default/ods
+

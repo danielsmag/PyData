@@ -1,4 +1,4 @@
-site_name: migdal.platform.templates.lib.python //Project Name
+site_name: migdal.data.ods.glue-sdk 
 
 nav:
   - Home: README.md 

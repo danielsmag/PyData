@@ -1,10 +1,10 @@
 pipeline:
-  projectIdentifier: templates
-  orgIdentifier: Platform
+  projectIdentifier: Ods
+  orgIdentifier: Data
   properties:
     ci:
       codebase:
-        repoName: migdal.platform.templates.lib.python
+        repoName: migdal.data.ods.glue-sdk
         build: <+input>
         depth: 0
   stages:
@@ -65,5 +65,5 @@ pipeline:
       description: ""
       required: false
       value: <+input>
-  identifier: pr_libtemplate
-  name: pr_libtemplate
+  identifier: migdaldataodsgluesdkPR
+  name: migdal.data.ods.glue-sdk-PR
