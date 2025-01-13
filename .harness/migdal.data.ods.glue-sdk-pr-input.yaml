@@ -1,0 +1,33 @@
+inputSet:
+    name: pr
+    tags: {}
+    identifier: pr
+    orgIdentifier: Data
+    projectIdentifier: Ods
+    pipeline:
+      identifier: migdaldataodsgluesdkPR
+      properties:
+        ci:
+          codebase:
+            build:
+              type: branch
+              spec:
+                branch: <+trigger.sourceBranch>
+      variables:
+        - name: prNumber
+          type: String
+          value: <+trigger.prNumber>
+        - name: prTitle
+          type: String
+          value: <+trigger.prTitle>
+        - name: sourceBranch
+          type: String
+          value: <+trigger.sourceBranch>
+        - name: targetBranch
+          type: String
+          value: <+trigger.targetBranch>
+        - name: email
+          type: String
+          value: <+eventPayload.principal.email>
+
+      
