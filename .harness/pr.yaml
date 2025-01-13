@@ -65,5 +65,5 @@ pipeline:
       description: ""
       required: false
       value: <+input>
-  identifier: pr_template
-  name: pr_template
+  identifier: pr_libtemplate
+  name: pr_libtemplate

@@ -32,5 +32,5 @@ pipeline:
               - name: release
                 type: String
                 value: "false"
-  name: CI-template
-  identifier: CItemplate
+  name: CI-lib-template
+  identifier: CIlibtemplate

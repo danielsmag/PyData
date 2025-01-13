@@ -14,5 +14,5 @@ pipeline:
         template:
           templateRef: account.Publish_python_lib
           versionLabel: 1.0.0
-  identifier: CDtemplate
-  name: CD-template       
+  identifier: CDlibtemplate
+  name: CD-lib-template       
