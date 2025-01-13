@@ -13,7 +13,7 @@ pipeline:
         identifier: build
         template:
           templateRef: account.python_lib_ci
-          versionLabel: 1.0.1
+          versionLabel: 1.0.0
     - stage:
         name: Deploy
         identifier: Deploy
@@ -21,16 +21,16 @@ pipeline:
         type: Pipeline
         spec:
           org: Platform
-          pipeline: CDtemplate
+          pipeline: CDlibtemplate
           project: templates
           inputs:
-            identifier: CDtemplate
-            variables:
-              - name: image_tag
-                type: String
-                value: <+pipeline.stages.build.spec.execution.steps.Push.steps.BuildAndPushECR.artifact_Push_BuildAndPushECR.stepArtifacts.publishedImageArtifacts[0].tag>
-              - name: release
-                type: String
-                value: "false"
+            identifier: CDlibtemplate
+            properties:
+              ci:
+                codebase:
+                  build:
+                    spec:
+                      branch: main
+                    type: branch
   name: CI-lib-template
   identifier: CIlibtemplate
