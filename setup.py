@@ -6,7 +6,7 @@ with open("README.md", "r", encoding="utf-8") as fh:
 setup(
     name="glue_sdk",
     version="0.1.0",
-    author="Michael Liav",
+    author="Daniel Smagarinsjy",
     author_email="danielsm@migdal.co.il",
     description="custom sdk for glue/spark",
     long_description=long_description,
