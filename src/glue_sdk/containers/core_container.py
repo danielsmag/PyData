@@ -2,7 +2,7 @@ from dependency_injector import containers, providers
 from ..spark.clients.spark_client import SparkClient 
 from awsglue.job import Job
 
-class Core(containers.DeclarativeContainer):
+class CoreContainer(containers.DeclarativeContainer):
 
     config = providers.Configuration()
     clients = providers.Dependency()

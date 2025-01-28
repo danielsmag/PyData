@@ -1,11 +1,11 @@
 from dependency_injector import containers, providers
 from ..general import (
-                        S3Client,
-                        SecretClient,
-                        SecretService,
-                        S3Service,
-                        GlueClient
-                       )
+        S3Client,
+        SecretClient,
+        SecretService,
+        S3Service,
+        GlueClient
+)
 
 
 __all__: list[str] = ['General']

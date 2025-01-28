@@ -2,18 +2,11 @@ from dependency_injector import containers, providers
 
 from .opensearch_container import OpenSearchContainer
 from .data_catalog_container import DataCatalogContainer
-from .core_container import Core
-from .cache_container import Cache
-from .clients_container import Clients
-
-from glue_sdk.containers.aurora_pg_container import AuroraPgContainer
-from glue_sdk.containers.data_builders_container import DataBuilderContainer
-from glue_sdk.containers.general_container import General
-
-
-from glue_sdk.core.app_settings import get_settings
-from glue_sdk.containers.spark_container import SparkContainer
-
+from .core_container import CoreContainer
+from .cache_container import CacheContainer
+from .spark_container import SparkContainer
+from .aurora_pg_container import AuroraPgContainer
+from .data_builders_container import DataBuilderContainer
 
 class ApplicationContainer(containers.DeclarativeContainer):
 
@@ -23,17 +16,10 @@ class ApplicationContainer(containers.DeclarativeContainer):
     
     config  = providers.Configuration()
     
-    app_settings = providers.Singleton(provides=get_settings)
-    
-    clients  = providers.Container(
-        container_cls=Clients,
-        config=config,
-    )
-    
+       
     core = providers.Container(
-        container_cls=Core,
-        config=config,
-        clients=clients
+        container_cls=CoreContainer,
+        config=config
     )
 
     spark = providers.Container(
@@ -44,20 +30,19 @@ class ApplicationContainer(containers.DeclarativeContainer):
     )
     
     general = providers.Container(
-        container_cls=General,
+        container_cls=SparkContainer,
         config=config,
         core=core
     )
 
     cache = providers.Container(
-        container_cls=Cache,
+        container_cls=CacheContainer,
         config=config
     )
     
     data_catalog = providers.Container(
         container_cls=DataCatalogContainer,
         config=config,
-        clients=clients,
         core=core,
         cache=cache
     )

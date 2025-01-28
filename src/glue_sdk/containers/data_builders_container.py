@@ -1,7 +1,6 @@
 from dependency_injector import containers, providers
 
-from glue_sdk.builders import DataLoader
-from glue_sdk.builders import DataWriter
+from ..builders import DataLoader,DataWriter
 
 class DataBuilderContainer(containers.DeclarativeContainer):
     config = providers.Configuration()
