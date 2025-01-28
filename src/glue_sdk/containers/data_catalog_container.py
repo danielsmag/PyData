@@ -1,6 +1,6 @@
 from dependency_injector import containers, providers
 
-from glue_sdk.services.data_catalog_service import DataCatalogService
+from ..glue_data_catalog import DataCatalogService
 
 class DataCatalogContainer(containers.DeclarativeContainer):
     config = providers.Configuration()

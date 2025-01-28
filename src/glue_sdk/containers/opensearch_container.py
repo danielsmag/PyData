@@ -1,9 +1,15 @@
 from dependency_injector import containers, providers
-from glue_sdk.clients.opensearch_client import OpenSearchClient
-from glue_sdk.services.opensearch_service import OpenSearchService
-from glue_sdk.workers.opensearch_pyspark_worker import OpenSearchPySparkWorker
+from typing import List
+
+from ..opensearch import (
+    OpenSearchClient,
+    OpenSearchService,
+    OpenSearchGlueWorker,
+    OpenSearchPySparkWorker
+)
 
 
+__all__:List[str] = ["OpenSearchContainer"]
 class OpenSearchContainer(containers.DeclarativeContainer):
     
     core = providers.DependenciesContainer()

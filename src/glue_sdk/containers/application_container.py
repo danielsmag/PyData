@@ -1,57 +1,20 @@
 from dependency_injector import containers, providers
 
-from glue_sdk.containers.opensearch_container import OpenSearchContainer
-from glue_sdk.containers.data_catalog_container import DataCatalogContainer
+from .opensearch_container import OpenSearchContainer
+from .data_catalog_container import DataCatalogContainer
+from .core_container import Core
+from .cache_container import Cache
+from .clients_container import Clients
+
 from glue_sdk.containers.aurora_pg_container import AuroraPgContainer
 from glue_sdk.containers.data_builders_container import DataBuilderContainer
 from glue_sdk.containers.general_container import General
-from glue_sdk.containers.clients_container import Clients
-from glue_sdk.services.shared_memory_service import SharedDataService
+
+
 from glue_sdk.core.app_settings import get_settings
 from glue_sdk.containers.spark_container import SparkContainer
-from glue_sdk.clients import SparkClient
 
-from awsglue.job import Job
 
-class Core(containers.DeclarativeContainer):
-    config = providers.Configuration()
-    clients = providers.Dependency()
-    
-    dynamic_configs_spark_client = providers.Factory(
-        provides=lambda: {}
-    )
-    
-    spark_client = providers.Singleton(
-        provides=SparkClient, 
-        env=config.env,
-        dynamic_configs_spark_client=dynamic_configs_spark_client
-        )
-    
-    spark_session = providers.Singleton(
-        provides=spark_client.provided.spark_session
-    )
-    
-    spark_context = providers.Singleton(
-        provides=spark_client.provided.spark_context
-  
-    )
-    
-    glue_context = providers.Singleton(
-        provides=spark_client.provided.glue_context
-    )
-    
-    glue_job = providers.Singleton(
-        provides=lambda glue_context: Job(glue_context), glue_context=glue_context
-    )
-    
-
-class CacheContainer(containers.DeclarativeContainer):
-    config  = providers.Configuration()
-    cache = providers.Singleton(
-        provides=SharedDataService,
-        cache_timeout=None
-    )
-    
 class ApplicationContainer(containers.DeclarativeContainer):
 
     wiring_config = containers.WiringConfiguration(
@@ -87,7 +50,7 @@ class ApplicationContainer(containers.DeclarativeContainer):
     )
 
     cache = providers.Container(
-        container_cls=CacheContainer,
+        container_cls=Cache,
         config=config
     )
     

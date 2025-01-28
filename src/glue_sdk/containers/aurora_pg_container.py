@@ -1,9 +1,12 @@
 from dependency_injector import containers, providers
-from glue_sdk.clients.aurora_pg_client import AuroraPgClient
-from glue_sdk.services.aurora_pg_service import AuroraPgService
-from glue_sdk.workers.aurora_pg_glue_worker import GlueAuroraPgWorker
-from glue_sdk.workers.aurora_pg_pyspark_worker import PySparkAuroraPgWorker
-from glue_sdk.workers.aurora_pg_python_worker import Psycopg2AuroraPgWorker
+
+from ..aurora_pg import (
+        AuroraPgClient,
+        GlueAuroraPgWorker,
+        Psycopg2AuroraPgWorker,
+        PySparkAuroraPgWorker,
+        AuroraPgService
+)
 
 __all__: list[str] = ['AuroraPgContainer']
 

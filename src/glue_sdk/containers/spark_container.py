@@ -1,6 +1,6 @@
 from dependency_injector import containers, providers
-from glue_sdk.services import SparkBaseService
 
+from ..spark import SparkBaseService
 
 
 class SparkContainer(containers.DeclarativeContainer):

@@ -1,6 +1,6 @@
 from typing import List
 
-from ..general.decorators import validate_processed
+from ..general.decorators.decorators import validate_processed
 from .di_application import cache,config
 from .di_data import data_loader, data_writer
 from ..opensearch.decorators.di_openseach import opensearch_service,opensearch_client
