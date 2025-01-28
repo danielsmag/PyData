@@ -1,7 +1,7 @@
 from botocore.exceptions import ClientError
 from typing import List, Optional, Dict, TYPE_CHECKING, Any
 from glue_sdk.models.s3path_model import S3Path
-from glue_sdk.decorators.decorators import handle_s3_exception
+from glue_sdk.core.decorators.decorators import handle_s3_exception
 import json
 import yaml
 from glue_sdk.services.base_service import BaseService
