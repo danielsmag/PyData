@@ -7,12 +7,15 @@ from .cache_container import CacheContainer
 from .spark_container import SparkContainer
 from .aurora_pg_container import AuroraPgContainer
 from .data_builders_container import DataBuilderContainer
+from ..core.shared import AwsServicesToUse
 
 class ApplicationContainer(containers.DeclarativeContainer):
 
     wiring_config = containers.WiringConfiguration(
     packages=["glue_sdk"] 
     )  
+    
+    aws_services_to_use = providers.Object(provides=AwsServicesToUse())
     
     config  = providers.Configuration()
     
@@ -25,8 +28,7 @@ class ApplicationContainer(containers.DeclarativeContainer):
     spark = providers.Container(
         container_cls=SparkContainer,
         core=core,
-        config=config,
-        app_settings=app_settings
+        config=config
     )
     
     general = providers.Container(
@@ -45,22 +47,20 @@ class ApplicationContainer(containers.DeclarativeContainer):
         config=config,
         core=core,
         cache=cache
-    )
+    ) 
+    
     
     opensearch = providers.Container(
         container_cls=OpenSearchContainer,
         config=config.opensearch,
-        core=core,
-        app_settings=app_settings
-    )
+        core=core
+    ) if aws_services_to_use().use_aurora_pg else None
     
     aurora_pg = providers.Container(
         container_cls=AuroraPgContainer,
         config=config.aurora_pg,
-        core=core,
-        app_settings=app_settings
-    )
-    
+        core=core
+    ) 
     data_builders = providers.Container(
         container_cls=DataBuilderContainer,
         config=config,

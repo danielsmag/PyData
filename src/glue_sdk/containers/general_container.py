@@ -8,9 +8,9 @@ from ..general import (
 )
 
 
-__all__: list[str] = ['General']
+__all__: list[str] = ['GeneralContainer']
 
-class General(containers.DeclarativeContainer):
+class GeneralContainer(containers.DeclarativeContainer):
     config = providers.Configuration()
     core = providers.DependenciesContainer()
     

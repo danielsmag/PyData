@@ -7,7 +7,6 @@ class SparkContainer(containers.DeclarativeContainer):
     
     core = providers.DependenciesContainer()
     config = providers.Configuration()       
-    app_settings = providers.Dependency()
     spark_client = providers.Dependency()
    
     

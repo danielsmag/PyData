@@ -2,13 +2,12 @@
 from dependency_injector.wiring import inject, Provide
 from typing import List,Callable, TYPE_CHECKING, Any
 import functools
-from glue_sdk.containers.application_container import ApplicationContainer
+
 if TYPE_CHECKING:
     from glue_sdk.interfaces.i_cache import ICache
     from glue_sdk.core.app_settings import Settings
 
 __all__:List[str] = [
-    "cache",
     "config"
 ]
 

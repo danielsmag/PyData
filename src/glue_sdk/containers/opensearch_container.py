@@ -8,18 +8,17 @@ from ..opensearch import (
     OpenSearchPySparkWorker
 )
 
-
 __all__:List[str] = ["OpenSearchContainer"]
+
 class OpenSearchContainer(containers.DeclarativeContainer):
     
     core = providers.DependenciesContainer()
     config = providers.Configuration()       
-    app_settings = providers.Dependency()
-    
+
     opensearch_secrets = providers.Callable(
         provides=lambda secret_service, secret_name: secret_service.fetch_secrets(secret_name),
         secret_service=core.secret_service,
-        secret_name=app_settings.provided.opensearch.opensearch_secret_name
+        secret_name=config.opensearch_secret_name
     )
 
     opensearch_client_factory  = providers.Factory(
@@ -46,7 +45,7 @@ class OpenSearchContainer(containers.DeclarativeContainer):
     )
     
     opensearch_glue_worker = providers.Factory(
-        provides=OpenSearchPySparkWorker,
+        provides=OpenSearchGlueWorker,
         glue_context=core.glue_context,
         opensearch_config=config
     )

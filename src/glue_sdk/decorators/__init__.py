@@ -1,8 +1,7 @@
 from typing import List, TYPE_CHECKING
 import importlib
 
-if TYPE_CHECKING:
-    from .decorators import singelton
+
 # from ..general.decorators.decorators import validate_processed
 
 
