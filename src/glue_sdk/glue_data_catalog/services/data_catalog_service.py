@@ -1,9 +1,9 @@
 from botocore.exceptions import ClientError
 from typing import Optional, Any, List,Literal , Dict,TYPE_CHECKING, Union
 from pyspark.sql import DataFrame
-from glue_sdk.services.base_service import BaseService
-from glue_sdk.models.data_catalog_model import DataCatalogDatabase,DataCatalogTable
-from glue_sdk.interfaces.i_data_catalog_service import IDataCatalogService
+from ...core.services.base_service import BaseService
+from ..models.data_catalog_model import DataCatalogDatabase,DataCatalogTable
+from ..interfaces.i_data_catalog_service import IDataCatalogService
 
 if TYPE_CHECKING:
     from botocore.client import BaseClient
@@ -78,7 +78,7 @@ class DataCatalogService(BaseService,IDataCatalogService):
         
     def fetch_db(self,
                 db_name: str           
-                ) -> DataCatalogDatabase:
+                ) -> "DataCatalogDatabase":
         """get db meta data"""
         try:
             response: Dict = self.glue_client.get_database(Name=db_name)
@@ -201,7 +201,7 @@ class DataCatalogService(BaseService,IDataCatalogService):
         
         try:
             if isinstance(data, DataFrame):
-                dynamic_frame: DynamicFrame = DynamicFrame.fromDF(data, self.glue_context, "dynamic_frame")
+                dynamic_frame: 'DynamicFrame' = DynamicFrame.fromDF(data, self.glue_context, "dynamic_frame")
                 self.log_info(message="Converted DataFrame to DynamicFrame.")
             elif isinstance(data, DynamicFrame):
                 dynamic_frame = data

@@ -1,6 +1,6 @@
-from glue_sdk.core.logger import logger
-from glue_sdk.interfaces.i_base_service import IBaseService
-from glue_sdk.services.notification_service import NotificationService
+from ...core.logging.logger import logger
+from ...core.interfaces.i_base_service import IBaseService
+from ...core.services.notification_service import NotificationService
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:

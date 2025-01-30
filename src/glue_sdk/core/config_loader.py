@@ -1,7 +1,8 @@
 import yaml
 from typing import Any, Dict, List
-from glue_sdk.utils.utils import get_yaml_from_s3
-from glue_sdk.core.logger import logger
+from .utils.utils import get_yaml_from_s3
+from .logging.logger import logger
+
 
 class ConfigLoader:
     _config: Dict[str, Any] = {}

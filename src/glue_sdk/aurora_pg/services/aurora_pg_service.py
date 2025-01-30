@@ -1,11 +1,10 @@
 from typing import Dict,Literal, List,Optional, Tuple, TYPE_CHECKING
 from pyspark.sql import DataFrame
-from glue_sdk.services.base_service import BaseService
-from glue_sdk.interfaces.i_aurora_pg_service import IAuroraPgService
+from ...core.services.base_service import BaseService
+from ..interfaces.i_aurora_pg_service import IAuroraPgService
 
 if TYPE_CHECKING:
-    from glue_sdk.interfaces.i_client import IClient
-    from glue_sdk.interfaces.i_aurora_pg_worker import IAuroraPgWorker
+    from ..interfaces.i_aurora_pg_worker import IAuroraPgWorker
 
 
 
@@ -71,7 +70,7 @@ class AuroraPgService(IAuroraPgService,BaseService):
     def fetch_data(self, table_name: str, 
                    push_down_predicate: Optional[str] = None,
                    worker_type: Literal['python', 'pyspark', 'glue'] ='glue'
-                   ) -> DataFrame:
+                   ) -> 'DataFrame':
         """
         Fetches data from the Aurora PostgreSQL database as a Spark DataFrame.
         Using Glue context
@@ -88,7 +87,7 @@ class AuroraPgService(IAuroraPgService,BaseService):
         
            
     def load_data(self, 
-                  spark_df: DataFrame, 
+                  spark_df: 'DataFrame', 
                   table_name: str,
                   db_name: Optional[str]= None,
                   schema: Optional[str] = None,

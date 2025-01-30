@@ -1,5 +1,5 @@
 from typing import Dict, Optional, TYPE_CHECKING
-from glue_sdk.core.logger import logger
+from ...core.logging.logger import logger
 from pyspark.context import SparkContext
 from pyspark.sql import SparkSession   
 from awsglue.context import GlueContext

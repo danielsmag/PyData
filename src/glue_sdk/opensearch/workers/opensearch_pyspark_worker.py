@@ -1,7 +1,7 @@
-from glue_sdk.interfaces.i_opensearch_worker import IOpenSearchWorker
+from ..interfaces.i_opensearch_worker import IOpenSearchWorker
 from pyspark.sql import DataFrame
 from typing import List,Literal, Dict
-from glue_sdk.core.logger import logger
+from ...core.logging.logger import logger
 
 from pyspark.sql import DataFrame
 from typing import Optional, Literal

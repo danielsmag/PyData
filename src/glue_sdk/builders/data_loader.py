@@ -1,18 +1,17 @@
 from typing import Optional, List, Literal,TYPE_CHECKING, Union, Any
 from typing_extensions import Self
-from pyspark.sql.dataframe import DataFrame
 from pydantic import validate_call
 from glue_sdk.builders.data_builder_base import DataBuilderBase
-from glue_sdk.interfaces.i_data_loader import IDataLoader
-from pydantic import validate_call
+from .interfaces.i_data_loader import IDataLoader
+
 
 if TYPE_CHECKING:
-    from glue_sdk.interfaces.i_cache import ICache
-    from glue_sdk.interfaces.i_data_catalog_service import IDataCatalogService
-    from glue_sdk.interfaces.i_aurora_pg_service import IAuroraPgService
+    from ..cache.interfaces.i_cache import ICache
+    from ..glue_data_catalog.interfaces.i_data_catalog_service import IDataCatalogService
+    from ..aurora_pg.interfaces.i_aurora_pg_service import IAuroraPgService
     from awsglue.dynamicframe import DynamicFrame
-    from glue_sdk.services import ISparkBaseService
-    
+    from ..spark.interfaces.i_spark_base_service import ISparkBaseService
+    from pyspark.sql.dataframe import DataFrame
     
 __all__:List[str] = ["DataLoader"]
 

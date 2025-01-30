@@ -1,6 +1,6 @@
 from typing import Optional, TYPE_CHECKING, Literal
-from glue_sdk.core.logger import logger
-from glue_sdk.interfaces.i_aurora_pg_client import IAuroraPgClient
+from ...core.logging.logger import logger
+from ..interfaces.i_aurora_pg_client import IAuroraPgClient
 
 if TYPE_CHECKING:
     from psycopg2.extensions import connection as psycopg_connection

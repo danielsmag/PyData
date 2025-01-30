@@ -1,18 +1,19 @@
 from typing import Optional, Union, List, TYPE_CHECKING
 from pyspark.sql import DataFrame
-from glue_sdk.interfaces.i_data_builder_base import IDataBuilder
-from glue_sdk.services.base_service import BaseService
-from glue_sdk.utils.utils import to_camel_case
+from .interfaces.i_data_builder_base import IDataBuilder
+from ..core.services.base_service import BaseService
+from ..core.utils.utils import to_camel_case
 from typing_extensions import Self
 from pydantic import validate_call
 
 if TYPE_CHECKING:
-    from glue_sdk.interfaces.i_cache import ICache
-    from glue_sdk.interfaces.i_data_catalog_service import IDataCatalogService
-    from glue_sdk.interfaces.i_data_builder_base import IDataBuilder
-    from glue_sdk.interfaces.i_aurora_pg_service import IAuroraPgService
+    from ..cache.interfaces.i_cache import ICache
+    from ..glue_data_catalog.interfaces.i_data_catalog_service import IDataCatalogService
+    from ..aurora_pg.interfaces.i_aurora_pg_service import IAuroraPgService
     from awsglue.dynamicframe import DynamicFrame
-    from glue_sdk.services import ISparkBaseService
+    from ..spark.interfaces.i_spark_base_service import ISparkBaseService
+    from pyspark.sql.dataframe import DataFrame
+    
         
 __all__:List[str] = ['DataBuilderBase']
 
@@ -39,12 +40,12 @@ class DataBuilderBase(IDataBuilder,BaseService):
         :param cache: Optional shared cache for storing and retrieving Spark data
         """
         super().__init__()
-        self.aurora_pg_service: Optional[IAuroraPgService] = aurora_pg_service
+        self.aurora_pg_service: Optional['IAuroraPgService'] = aurora_pg_service
         self.data_catalog_service: Optional["IDataCatalogService"] = data_catalog_service
         self.spark_base_service: Optional["ISparkBaseService"] = spark_base_service
         self.cache: Optional["ICache"] = cache
-        self.data: Optional[Union["DynamicFrame", DataFrame]] = None
-        self.df: Optional[DataFrame] = None
+        self.data: Optional[Union["DynamicFrame", 'DataFrame']] = None
+        self.df: Optional['DataFrame'] = None
         self.db_name: Optional[str] = None
         self.table_name: Optional[str] = None
 
@@ -52,7 +53,9 @@ class DataBuilderBase(IDataBuilder,BaseService):
         """
         Internal helper to ensure self.data is stored as a Spark DataFrame in self.df.
         """
-        if isinstance(self.data, "DynamicFrame"):
+        from awsglue.dynamicframe import DynamicFrame
+        
+        if isinstance(self.data, DynamicFrame):
             self.df = self.data.toDF()
         elif isinstance(self.data, DataFrame):
             self.df = self.data

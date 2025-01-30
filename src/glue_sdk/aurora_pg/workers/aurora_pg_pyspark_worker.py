@@ -1,7 +1,7 @@
-from glue_sdk.interfaces.i_aurora_pg_worker import IAuroraPgWorker
+from ..interfaces.i_aurora_pg_worker import IAuroraPgWorker
 from typing import Dict, Optional, List,TYPE_CHECKING, Literal
 from pyspark.sql import DataFrame
-from glue_sdk.services.base_service import BaseService
+from ...core.services.base_service import BaseService
 
 if TYPE_CHECKING:
     from pyspark.sql import SparkSession
@@ -31,7 +31,7 @@ class PySparkAuroraPgWorker(BaseService,IAuroraPgWorker):
     def db_password(self) -> str:
         return self._db_password
     
-    def fetch_data(self, table_name: str, push_down_predicate: Optional[str] = None) -> DataFrame:
+    def fetch_data(self, table_name: str, push_down_predicate: Optional[str] = None) -> 'DataFrame':
         try:
             self.log_debug(f"Fetching data from table '{table_name}' with predicate: {push_down_predicate}")
             properties: Dict[str, str] = {
@@ -44,7 +44,7 @@ class PySparkAuroraPgWorker(BaseService,IAuroraPgWorker):
                 query += f" WHERE {push_down_predicate}"
             query += ") AS subquery"
             
-            spark_df: DataFrame = self.spark.read.jdbc(url=self.jdbc_url, table=query, properties=properties)
+            spark_df: 'DataFrame' = self.spark.read.jdbc(url=self.jdbc_url, table=query, properties=properties)
             self.log_debug(f"Successfully fetched data from table '{table_name}'")
             return spark_df
         except Exception as e:
@@ -52,7 +52,7 @@ class PySparkAuroraPgWorker(BaseService,IAuroraPgWorker):
             raise
     
     def load_data(self, 
-                  spark_df: DataFrame, 
+                  spark_df: 'DataFrame', 
                   table_name: str,
                   db_name: Optional[str] = None,
                   schema:Optional[str]= None,

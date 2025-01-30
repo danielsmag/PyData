@@ -1,6 +1,6 @@
 from threading import RLock
 from typing import List,Any,Dict, Optional
-from glue_sdk.interfaces.i_cache import ICache
+from ..interfaces.i_cache import ICache
 import time
 from abc import ABCMeta
 from pydantic import validate_call

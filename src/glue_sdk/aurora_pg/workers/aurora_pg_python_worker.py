@@ -1,14 +1,13 @@
-from glue_sdk.interfaces.i_aurora_pg_worker import IAuroraPgWorker
+
 from typing import Any, Dict, Optional, List, Tuple,TYPE_CHECKING, Literal
 from pyspark.sql import DataFrame
-from glue_sdk.services.base_service import BaseService 
+from ...core.services.base_service import BaseService 
 from pyspark.sql.types import StructType, StructField, StringType, IntegerType, FloatType  
+from ..interfaces.i_aurora_pg_worker import IAuroraPgWorker
 
 if TYPE_CHECKING:
-    from glue_sdk.interfaces.i_aurora_pg_worker import IAuroraPgWorker
-    from glue_sdk.services.base_service import BaseService
-    from glue_sdk.interfaces.i_aurora_pg_client import IAuroraPgClient
-    from psycopg2 import sql
+    
+    from ..interfaces.i_aurora_pg_client import IAuroraPgClient
     
 class Psycopg2AuroraPgWorker(IAuroraPgWorker, BaseService):
     __slots__: Tuple = ("config", "client", "connection_name", "spark")
@@ -32,7 +31,7 @@ class Psycopg2AuroraPgWorker(IAuroraPgWorker, BaseService):
         self.config: Dict = config
         self.client: "IAuroraPgClient" = aurora_pg_client
                
-    def fetch_data(self, table_name: str, push_down_predicate: Optional[str] = None) -> DataFrame:
+    def fetch_data(self, table_name: str, push_down_predicate: Optional[str] = None) -> 'DataFrame':
         """
         Fetches data from the Aurora PostgreSQL database as a Spark DataFrame using psycopg2.
 
@@ -77,7 +76,7 @@ class Psycopg2AuroraPgWorker(IAuroraPgWorker, BaseService):
             raise
 
     def load_data(self,  
-                  spark_df: DataFrame, 
+                  spark_df: 'DataFrame', 
                   table_name: str,
                   db_name: Optional[str] = None,
                   schema:Optional[str]= None,

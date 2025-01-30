@@ -1,12 +1,12 @@
 from typing import Dict, List, Optional, Tuple,Literal,TYPE_CHECKING
 from pyspark.sql import DataFrame
 from pydantic import validate_call
-from glue_sdk.services.base_service import BaseService
-from glue_sdk.interfaces.i_opensearch_service import IOpenSearchService
-from glue_sdk.core.logger import logger
+from ...core.services.base_service import BaseService
+from ..interfaces.i_opensearch_service import IOpenSearchService
+from ...core.logging.logger import logger
 
 if TYPE_CHECKING:
-    from interfaces.i_opensearch_worker import IOpenSearchWorker
+    from ..interfaces.i_opensearch_worker import IOpenSearchWorker
     from opensearchpy import OpenSearch
     from awsglue.context import GlueContext
     

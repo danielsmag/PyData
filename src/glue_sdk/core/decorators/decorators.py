@@ -2,7 +2,7 @@ import threading
 from functools import wraps
 import functools
 from typing import Callable, Optional
-from ...general.models.results_model import FuncResult
+from ...core.models.results_model import FuncResult
 from ..logging.logger import logger
 import time
 

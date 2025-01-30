@@ -1,9 +1,12 @@
 from abc import ABC, abstractmethod
-from typing import Optional, List, Literal
+from typing import Optional, List, Literal,TYPE_CHECKING
 from typing_extensions import Self
 
-from pyspark.sql import DataFrame
-from glue_sdk.interfaces.i_data_builder_base import IDataBuilder
+
+from ..interfaces.i_data_builder_base import IDataBuilder
+
+if TYPE_CHECKING:
+    from pyspark.sql import DataFrame
 
 class IDataWriter(IDataBuilder,ABC):
     """
@@ -13,7 +16,7 @@ class IDataWriter(IDataBuilder,ABC):
     """
 
     @abstractmethod
-    def write(self, data: DataFrame) -> Self:
+    def write(self, data: 'DataFrame') -> Self:
         """
         Store the provided data internally (Spark DataFrame or Glue DynamicFrame).
 

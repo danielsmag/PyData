@@ -1,6 +1,6 @@
 from typing import Optional, Tuple, TYPE_CHECKING
-from glue_sdk.interfaces.i_client import IClient
-from glue_sdk.core.logger import logger
+from ...core.interfaces.i_client import IClient
+from ...core.logging.logger import logger
 
 if TYPE_CHECKING:
     from opensearchpy import OpenSearch

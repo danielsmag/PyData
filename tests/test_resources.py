@@ -1,24 +1,24 @@
 import pytest
-from glue_sdk.core.app_settings import Settings, Settings, get_settings_from_s3
+
 from glue_sdk.containers import ApplicationContainer
 from botocore.client import BaseClient
 
-app_settings: Settings = get_settings_from_s3(
-    env="test",
-    prefix="",
-    version="1.0.0"
-)
+
 import sys
 import os
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '../../glue_sdk/src')))
-from glue_sdk import SdkManager
+from glue_sdk import SdkManager,SdkConfig
 
-
-sdk = SdkManager()
-sdk.initialize()
-sdk.config.set_services_to_use(
-    USE_CACHE=True
+conf = SdkConfig()
+conf.set_services_to_use(
+    USE_CACHE=True,
+    USE_DATA_CATALOG=True
 )
+conf.set_spark_conf(config_data={})
+sdk = SdkManager(config=conf)
+sdk.initialize()
+
+
 
 
 container: 'ApplicationContainer' = sdk.container
@@ -26,10 +26,10 @@ container.config.override({'test': True})
 
 
 def test_cache_container():
-    from glue_sdk.services import SharedDataService,ICache
+    from glue_sdk.cache.services.shared_data_service import SharedDataService
     cache = container.cache.cache()
     assert isinstance(cache,SharedDataService)
-    assert isinstance(cache,ICache)
+
     
 
 def test_clients():

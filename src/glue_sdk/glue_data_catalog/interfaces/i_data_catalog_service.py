@@ -1,18 +1,17 @@
 from abc import ABC, abstractmethod
-from awsglue import DynamicFrame
 from typing import Optional, Any, List, Literal, Union,TYPE_CHECKING
 from pyspark.sql import DataFrame
-from glue_sdk.interfaces.i_base_service import IBaseService
+from ...core.interfaces.i_base_service import IBaseService
 
 
 if TYPE_CHECKING:
-    from glue_sdk.models.data_catalog_model import DataCatalogDatabase,DataCatalogTable
-    
+    from ..models.data_catalog_model import DataCatalogDatabase,DataCatalogTable
+    from awsglue import DynamicFrame
 class IDataCatalogService(IBaseService,ABC):
     
     @abstractmethod
     def load_dynamic_frame(self,database_name: str, 
-                           table_name: str) -> DynamicFrame:
+                           table_name: str) -> 'DynamicFrame':
         pass
     
     @abstractmethod
@@ -43,7 +42,7 @@ class IDataCatalogService(IBaseService,ABC):
     
     @abstractmethod
     def write_to_s3(self,
-        df: DynamicFrame | DataFrame,
+        df: 'DynamicFrame | DataFrame',
         target_path: str,
         format: str = "parquet",
         partition_keys: Optional[List[str]] = None,
@@ -54,7 +53,7 @@ class IDataCatalogService(IBaseService,ABC):
     
     @abstractmethod
     def write_to_catalog(self,
-            data: DynamicFrame | DataFrame|None,
+            data: 'DynamicFrame | DataFrame | None',
             db_name: str,
             table_name: str,
             partition_keys: Optional[list] = None,
@@ -69,7 +68,7 @@ class IDataCatalogService(IBaseService,ABC):
         format: str = "parquet",
         recurse: bool = True,
         transformation_ctx: Optional[str] = None
-        ) -> DataFrame:
+        ) -> 'DataFrame':
         """
             Loads data from S3 into a DataFrame.
 

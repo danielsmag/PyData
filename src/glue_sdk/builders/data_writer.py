@@ -2,15 +2,15 @@ from pyspark.sql import DataFrame
 from glue_sdk.builders.data_builder_base import DataBuilderBase
 from typing import Optional, Union, TYPE_CHECKING, Literal, List
 from typing_extensions import Self
-from glue_sdk.interfaces.i_data_writer import IDataWriter
-from glue_sdk.models.s3path_model import S3Path
+from .interfaces.i_data_writer import IDataWriter
+from ..core.models.s3path_model import S3Path
 from pydantic import validate_call
-from glue_sdk.services import ISparkBaseService
+from ..spark.interfaces.i_spark_base_service import ISparkBaseService
 
 if TYPE_CHECKING:
-    from glue_sdk.interfaces.i_data_catalog_service import IDataCatalogService   
-    from glue_sdk.interfaces.i_cache import ICache
-    from glue_sdk.interfaces.i_aurora_pg_service import IAuroraPgService
+    from ..glue_data_catalog.interfaces.i_data_catalog_service import IDataCatalogService   
+    from ..cache.interfaces.i_cache import ICache
+    from ..aurora_pg.interfaces.i_aurora_pg_service import IAuroraPgService
 
 class DataWriterError(Exception):
     pass
@@ -31,7 +31,7 @@ class DataWriter(IDataWriter,DataBuilderBase,):
                          )
             
     def write(self,
-            data: DataFrame
+            data: 'DataFrame'
             ) -> Self:
         """set data to be wirreten and convert to DF"""
         if data is not None:

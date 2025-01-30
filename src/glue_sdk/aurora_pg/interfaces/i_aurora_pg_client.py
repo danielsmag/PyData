@@ -1,10 +1,9 @@
 from abc import ABC, abstractmethod
 from typing import Optional, Literal,TYPE_CHECKING
-from glue_sdk.interfaces.i_client import IClient
+from ...core.interfaces.i_client import IClient
 
 if TYPE_CHECKING:
     import psycopg2.extensions as psycopg
-    from glue_sdk.interfaces.i_client import IClient
     from psycopg2.extensions import connection as psycopg_connection
     
 class IAuroraPgClient(IClient,ABC):

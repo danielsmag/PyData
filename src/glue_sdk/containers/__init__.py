@@ -1,20 +1,23 @@
 from typing import List, TYPE_CHECKING
 import importlib
+from .application_container import ApplicationContainer
 
 if TYPE_CHECKING:
-    from ..containers.application_container import ApplicationContainer
-
+    from .application_container import ApplicationContainer
+    
 __all__:List[str] = ["ApplicationContainer"]
 
 def __getattr__(name):
     if name in __all__:
         match name:
             case "ApplicationContainer":
-                submod = importlib.import_module('..containers.application_container', __name__)
+                submod = importlib.import_module('.application_container', __name__)
+                attr = submod.ApplicationContainer
             case _:
-                submod = importlib.import_module(f'.{name}', __name__)
-        globals()[name] = submod
-        return submod
+                raise AttributeError(f"Module {__name__} has no attribute {name}")
+            
+        globals()[name] = attr
+        return attr
     
     raise AttributeError(f"module {__name__} has no attribute {name}")
 

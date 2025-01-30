@@ -1,10 +1,12 @@
 from abc import ABC, abstractmethod
-from typing import Union
-from awsglue.dynamicframe import DynamicFrame
-from pyspark.sql.dataframe import DataFrame
+from typing import Union, TYPE_CHECKING
 
 from typing_extensions import Self
-from glue_sdk.interfaces.i_data_builder_base import IDataBuilder
+from ..interfaces.i_data_builder_base import IDataBuilder
+    
+if TYPE_CHECKING:
+    from awsglue.dynamicframe import DynamicFrame
+    from pyspark.sql.dataframe import DataFrame
     
 class IDataLoader(IDataBuilder,ABC):
 
@@ -17,7 +19,7 @@ class IDataLoader(IDataBuilder,ABC):
         pass
     
     @abstractmethod
-    def get(self) -> Union[DynamicFrame, DataFrame]:
+    def get(self) -> Union['DynamicFrame', 'DataFrame']:
         pass
  
     @abstractmethod
@@ -25,6 +27,6 @@ class IDataLoader(IDataBuilder,ABC):
         pass
        
     @abstractmethod
-    def get_df(self) -> DataFrame:
+    def get_df(self) -> 'DataFrame':
         pass
     

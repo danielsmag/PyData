@@ -4,7 +4,7 @@ from typing import Optional, TYPE_CHECKING,List,Dict, Any
 from threading import RLock
 from ..core.cache.config import CacheConfig
 from ..core.base import Sources,Output
-from ..core.logging.config_loader import ConfigLoader
+from .config_loader import ConfigLoader
 from ..core.logging.logger import logger
 
 if TYPE_CHECKING:

@@ -7,8 +7,8 @@ from typing import (
 from typing import TYPE_CHECKING
 from pyspark.sql import DataFrame
 import pyspark.sql.functions as F
-from glue_sdk.interfaces import ISparkBaseService
-from glue_sdk.services.base_service import BaseService
+from ..interfaces.i_spark_base_service import ISparkBaseService
+from ...core.services.base_service import BaseService
 
 class SparkBaseService(ISparkBaseService, BaseService):
     def __init__(self) -> None:

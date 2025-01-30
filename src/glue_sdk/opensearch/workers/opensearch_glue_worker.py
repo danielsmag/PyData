@@ -1,7 +1,7 @@
-from glue_sdk.interfaces.i_opensearch_worker import IOpenSearchWorker
+from ..interfaces.i_opensearch_worker import IOpenSearchWorker
 from pyspark.sql import DataFrame
 from typing import List,Literal, Dict, Any, TYPE_CHECKING
-from glue_sdk.core.logger import logger
+from ...core.logging.logger import logger
 from pyspark.sql import DataFrame
 from typing import Optional, Literal
 
@@ -28,7 +28,7 @@ class OpenSearchGlueWorker(IOpenSearchWorker):
         Args:
             connection_name: name of connection in glue env
         """
-        from awsglue.dynamicframe import DynamicFrame
+        
         super().__init__()
         self.opensearch_config: Dict =opensearch_config
         self.glue_context: "GlueContext" = glue_context
@@ -61,6 +61,7 @@ class OpenSearchGlueWorker(IOpenSearchWorker):
         Returns:
             bool: True if data is successfully written, False otherwise.
         """
+        from awsglue.dynamicframe import DynamicFrame
         try:
             es_batch_size_entries = es_batch_size_entries or self.opensearch_config.get("opensearch_batch_size_entries")
             es_batch_size_bytes= es_batch_size_bytes or self.opensearch_config.get("opensearch_batch_size_bytes")
