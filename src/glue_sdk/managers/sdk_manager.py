@@ -44,7 +44,7 @@ class SdkManager():
         
     @property
     def opensearch(self) -> 'SdkOpenSearch':
-        if not self.aws_services_to_use.use_opensearch:
+        if not self.aws_services_to_use.USE_OPENSEARCH:
             raise SdkManagerError("U have to enable OpenSearch resource")
         if not self._opensearch:
             self._opensearch = SdkOpenSearch(container=self.container)

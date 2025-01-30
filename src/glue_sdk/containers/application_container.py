@@ -40,27 +40,28 @@ class ApplicationContainer(containers.DeclarativeContainer):
     cache = providers.Container(
         container_cls=CacheContainer,
         config=config
-    )
+    ) if aws_services_to_use().USE_CACHE else None
     
     data_catalog = providers.Container(
         container_cls=DataCatalogContainer,
         config=config,
         core=core,
         cache=cache
-    ) 
-    
+    ) if aws_services_to_use().USE_DATA_CATALOG else None
     
     opensearch = providers.Container(
         container_cls=OpenSearchContainer,
         config=config.opensearch,
         core=core
-    ) if aws_services_to_use().use_aurora_pg else None
+    ) if aws_services_to_use().USE_OPENSEARCH else None
     
     aurora_pg = providers.Container(
         container_cls=AuroraPgContainer,
         config=config.aurora_pg,
         core=core
-    ) 
+    ) if aws_services_to_use().USE_AURORA_PG else None 
+    
+    
     data_builders = providers.Container(
         container_cls=DataBuilderContainer,
         config=config,
@@ -69,4 +70,4 @@ class ApplicationContainer(containers.DeclarativeContainer):
         data_catalog_container=data_catalog,
         aurora_pg_container=aurora_pg,
         spark_container=spark
-    )
+    ) if aws_services_to_use().USE_DATA_BUILDERS else None

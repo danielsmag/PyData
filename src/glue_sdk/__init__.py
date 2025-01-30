@@ -5,7 +5,7 @@ if TYPE_CHECKING:
     pass
 from .managers.sdk_manager import SdkManager
 
-sdkManager = SdkManager()
+# sdkManager = SdkManager()
 
 __all__:List[str] = ["SdkManager"]
 

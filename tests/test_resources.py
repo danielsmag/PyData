@@ -1,26 +1,27 @@
 import pytest
-from dependency_injector import providers
-from glue_sdk.containers.opensearch_container import OpenSearchContainer
-from glue_sdk.containers.data_catalog_container import DataCatalogContainer
-from glue_sdk.containers.aurora_pg_container import AuroraPgContainer
-from glue_sdk.containers.data_builders_container import DataBuilderContainer
-from glue_sdk.containers.general_container import General
-from glue_sdk.services.shared_memory_service import SharedDataService
-from glue_sdk.core.app_settings import Settings, Settings, get_settings,get_settings_from_s3
-from glue_sdk.clients.glue_client import GlueClient
-from glue_sdk.clients.s3_client import S3Client
-from glue_sdk.clients.secret_client import SecretClient
-from glue_sdk.clients.spark_client import SparkClient
-from awsglue.job import Job
+from glue_sdk.core.app_settings import Settings, Settings, get_settings_from_s3
 from glue_sdk.containers import ApplicationContainer
-from glue_sdk.decorators import s3_client,glue_client,secret_client
 from botocore.client import BaseClient
+
 app_settings: Settings = get_settings_from_s3(
     env="test",
     prefix="",
     version="1.0.0"
 )
-container = ApplicationContainer()
+import sys
+import os
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '../../glue_sdk/src')))
+from glue_sdk import SdkManager
+
+
+sdk = SdkManager()
+sdk.initialize()
+sdk.config.set_services_to_use(
+    USE_CACHE=True
+)
+
+
+container: 'ApplicationContainer' = sdk.container
 container.config.override({'test': True})
 
 
@@ -32,15 +33,15 @@ def test_cache_container():
     
 
 def test_clients():
-    from glue_sdk.clients.base_aws_client import BaseAWSClient
     
-    glue_client = container.clients.glue_client()
+    
+    glue_client = container.core.glue_client()
     assert isinstance(glue_client,BaseClient)
 
-    s3_client = container.clients.s3_client()
+    s3_client = container.general.s3_client()
     assert isinstance(s3_client,BaseClient)
     
-    secret_client = container.clients.secret_client()
+    secret_client = container.general.secret_client()
     assert isinstance(secret_client,BaseClient)
     
 def test_core_container():

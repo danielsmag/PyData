@@ -4,7 +4,8 @@ from .decorators.decorators import singelton
 @singelton
 @dataclass
 class AwsServicesToUse:
-    use_opensearch: bool = False
-    use_aurora_pg: bool = False
-    use_data_catalog: bool = False
-    
+    USE_OPENSEARCH: bool = False
+    USE_AURORA_PG: bool = False
+    USE_DATA_CATALOG: bool = False
+    USE_CACHE: bool = True
+    USE_DATA_BUILDERS: bool = True

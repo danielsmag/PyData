@@ -12,11 +12,25 @@ class SdkConfigError(Exception):
 
 @singelton
 class SdkConfig():
-    def __init__(self,container,aws_services_to_use) -> None:
-        self._opensearch = None
+    def __init__(self,
+                 container:'ApplicationContainer',
+                 aws_services_to_use:'AwsServicesToUse'
+                 ) -> None:
         self.aws_services_to_use: 'AwsServicesToUse' = aws_services_to_use
         self.container:'ApplicationContainer'=container
-        
+    
+    @validate_call
+    def set_services_to_use(self,
+        USE_OPENSEARCH: bool = False,
+        USE_DATA_CATALOG: bool = False,
+        USE_AURORA_PG: bool = False,
+        USE_CACHE: bool = True
+    ) -> None:
+        self.USE_OPENSEARCH=USE_OPENSEARCH
+        self.USE_DATA_CATALOG=USE_DATA_CATALOG
+        self.USE_AURORA_PG=USE_AURORA_PG
+        self.USE_CACHE=USE_CACHE
+    
     @validate_call
     def set_config_application(self,config_data: Dict = {}) -> None:
         """Set main config for sdk """
@@ -30,37 +44,43 @@ class SdkConfig():
         """
         set all spark config before load spark client
         """
-        
         self.container.spark.dynamic_configs_spark_client.override(provider=config_data)
 
     @property
-    def use_opensearch(self) -> bool:
-        return self.aws_services_to_use.use_opensearch
+    def USE_OPENSEARCH(self) -> bool:
+        return self.aws_services_to_use.USE_OPENSEARCH
     
-    @use_opensearch.setter
+    @USE_OPENSEARCH.setter
     @validate_call
-    def use_opensearch(self,v: bool) -> None:
-        from .sdk_opensearch import SdkOpenSearch
-        self.aws_services_to_use.use_opensearch = v
-        if self.aws_services_to_use.use_opensearch:
-            self.aws_services_to_use.use_opensearch=True
-            self._opensearch = SdkOpenSearch(container=self.container)
+    def USE_OPENSEARCH(self,v: bool) -> None:
+        self.aws_services_to_use.USE_OPENSEARCH = v
+       
+    @property
+    def USE_AURORA_PG(self) -> bool:
+        return self.aws_services_to_use.USE_AURORA_PG
+    
+    @USE_AURORA_PG.setter
+    @validate_call
+    def USE_AURORA_PG(self,v: bool) -> None:
+        self.aws_services_to_use.USE_AURORA_PG  = v
+        
+    @property
+    def USE_CACHE(self) -> bool:
+        return self.aws_services_to_use.USE_CACHE
+    
+    @USE_CACHE.setter
+    @validate_call
+    def USE_CACHE(self,v: bool) -> None:
+        self.aws_services_to_use.USE_CACHE  = v    
+    
     
     @property
-    def use_aurora_pg(self) -> bool:
-        return self.aws_services_to_use.use_aurora_pg
+    def USE_DATA_CATALOG(self) -> bool:
+        return self.aws_services_to_use.USE_DATA_CATALOG
     
-    @use_aurora_pg.setter
+    @USE_DATA_CATALOG.setter
     @validate_call
-    def use_aurora_pg(self,v: bool) -> None:
-        self.aws_services_to_use.use_aurora_pg  = v
+    def USE_DATA_CATALOG(self,v: bool) -> None:
+        self.aws_services_to_use.USE_DATA_CATALOG = v
     
-    @property
-    def use_data_catalog(self) -> bool:
-        return self.aws_services_to_use.use_data_catalog
-    
-    @use_data_catalog.setter
-    @validate_call
-    def use_data_catalog(self,v: bool) -> None:
-        self.aws_services_to_use.use_data_catalog = v
     

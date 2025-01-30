@@ -8,11 +8,15 @@ __all__:List[str] = ["ApplicationContainer"]
 
 def __getattr__(name):
     if name in __all__:
-        submod = importlib.import_module(f'.{name}',__name__)
+        match name:
+            case "ApplicationContainer":
+                submod = importlib.import_module('..containers.application_container', __name__)
+            case _:
+                submod = importlib.import_module(f'.{name}', __name__)
         globals()[name] = submod
         return submod
     
-    raise AttributeError(f"mudule {__name__} has no attribute {name}")
+    raise AttributeError(f"module {__name__} has no attribute {name}")
 
 def __dir__() -> List[str]:
     return list(globals().keys()) + __all__

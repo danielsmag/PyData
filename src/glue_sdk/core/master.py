@@ -2,10 +2,10 @@ from pydantic_settings import BaseSettings,SettingsConfigDict
 from pydantic import Field,field_validator
 from typing import Optional, TYPE_CHECKING,List,Dict, Any
 from threading import RLock
-from glue_sdk.core.cache.config import CacheConfig
-from glue_sdk.core.base import Sources,Output
-from glue_sdk.core.logging.config_loader import ConfigLoader
-from glue_sdk.core.logging.logger import logger
+from ..core.cache.config import CacheConfig
+from ..core.base import Sources,Output
+from ..core.logging.config_loader import ConfigLoader
+from ..core.logging.logger import logger
 
 if TYPE_CHECKING:
     from glue_sdk.core.opensearch.config import OpenSearchConfig

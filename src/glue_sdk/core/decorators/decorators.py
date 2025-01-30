@@ -7,11 +7,13 @@ from ..logging.logger import logger
 import time
 
 
-def _thread_safe_singelton(cls):
+
+def singelton(cls):
+    """safe threads singelton decorator"""
     _instance_lock = threading.Lock()
     _instance = {}
     
-    @wraps
+    @wraps(cls)
     def get_instance(*args, **kwargs):
         with _instance_lock:
             if cls not in _instance:
@@ -19,10 +21,6 @@ def _thread_safe_singelton(cls):
         return _instance[cls]
     
     return get_instance
-
-def singelton(cls):
-    """safe threads singelton decorator"""
-    return _thread_safe_singelton(cls)
 
 def validate_processed(action_name: str, on_failure: Optional[Callable] = None,*on_failure_args, **on_failure_kwargs):
     def decorator(func: Callable):
