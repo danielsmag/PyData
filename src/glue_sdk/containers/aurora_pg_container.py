@@ -20,7 +20,7 @@ class AuroraPgContainer(containers.DeclarativeContainer):
     
     aurora_pg_secrets = providers.Callable(
         provides=lambda secret_service, secret_name: secret_service.fetch_secrets(secret_name),
-        secret_service=core.secret_service,
+        secret_service=core.provided.secret_service,
         secret_name=config.secret
     ) 
 
