@@ -26,7 +26,7 @@ def test_cache_container():
 
     
 
-def test_clients():
+def test_clients() -> None:
         
     glue_client = container.general.glue_client()
     assert isinstance(glue_client,BaseClient)
@@ -37,7 +37,7 @@ def test_clients():
     secret_client = container.general.secret_client()
     assert isinstance(secret_client,BaseClient)
     
-def test_core_container():
+def test_core_container() -> None:
     from glue_sdk.spark.clients.spark_client import SparkClient
     from awsglue.context import GlueContext
     from pyspark.sql import SparkSession 
