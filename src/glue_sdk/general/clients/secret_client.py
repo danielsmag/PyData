@@ -1,5 +1,5 @@
 from typing import Any, Optional, Dict
-from glue_sdk.clients.base_aws_client import BaseAWSClient  
+from .base_aws_client import BaseAWSClient  
 
 
 class SecretClient(BaseAWSClient):

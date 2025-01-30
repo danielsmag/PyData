@@ -2,7 +2,7 @@ from abc import ABC, abstractmethod
 from typing import Optional, Dict, TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from glue_sdk.models.secret_model import Secrets
+    from ..models.secret_model import Secrets
 
 class ISecretService(ABC):
     """

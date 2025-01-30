@@ -1,5 +1,5 @@
 from pyspark.sql import DataFrame
-from glue_sdk.builders.data_builder_base import DataBuilderBase
+from .data_builder_base import DataBuilderBase
 from typing import Optional, Union, TYPE_CHECKING, Literal, List
 from typing_extensions import Self
 from .interfaces.i_data_writer import IDataWriter
@@ -19,16 +19,16 @@ class DataWriterError(Exception):
 class DataWriter(IDataWriter,DataBuilderBase,):
     
     def __init__(self,
-                 data_catalog_service: Optional["IDataCatalogService"] = None,
-                 cache: Optional["ICache"] = None,
-                 aurora_pg_service: Optional["IAuroraPgService"]= None,
-                 spark_base_service: Optional["ISparkBaseService"] = None 
-                 ) -> None:
+                data_catalog_service: Optional["IDataCatalogService"] = None,
+                cache: Optional["ICache"] = None,
+                aurora_pg_service: Optional["IAuroraPgService"]= None,
+                spark_base_service: Optional["ISparkBaseService"] = None 
+                ) -> None:
         super().__init__(data_catalog_service=data_catalog_service,
-                         cache=cache,
-                         aurora_pg_service=aurora_pg_service,
-                         spark_base_service=spark_base_service
-                         )
+                cache=cache,
+                aurora_pg_service=aurora_pg_service,
+                spark_base_service=spark_base_service
+                )
             
     def write(self,
             data: 'DataFrame'

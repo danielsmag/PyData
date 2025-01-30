@@ -1,7 +1,7 @@
 from dataclasses import dataclass,field
-from .decorators.decorators import singelton
+from .decorators.decorators import singleton
 
-@singelton
+@singleton
 @dataclass
 class AwsServicesToUse:
     USE_OPENSEARCH: bool = False

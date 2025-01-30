@@ -1,13 +1,14 @@
 from abc import ABC, abstractmethod
-from typing import Any, Dict, List, Optional, Union,Literal
+from typing import Any, Dict, List, Optional, Union,Literal,TYPE_CHECKING
 
-from pyspark.sql import DataFrame
+if TYPE_CHECKING:
+    from pyspark.sql import DataFrame
 
 class IOpenSearchService(ABC):
     @abstractmethod
     def load_data(
         self,
-        df:DataFrame,
+        df:'DataFrame',
         index: str,
         worker_mode: Literal["glue","pyspark"] = "pyspark",
         opensearch_mapping_id: Optional[str] = None,

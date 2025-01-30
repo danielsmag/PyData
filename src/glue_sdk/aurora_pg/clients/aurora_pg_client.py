@@ -4,7 +4,6 @@ from ..interfaces.i_aurora_pg_client import IAuroraPgClient
 
 if TYPE_CHECKING:
     from psycopg2.extensions import connection as psycopg_connection
-    import psycopg2
     
 class AuroraPgClient(IAuroraPgClient):
     def __init__(

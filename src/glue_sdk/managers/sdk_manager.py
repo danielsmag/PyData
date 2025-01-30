@@ -2,7 +2,7 @@ from pydantic import validate_call
 from typing import Any, Dict, Optional, TYPE_CHECKING
 
 
-from ..core.decorators.decorators import singelton
+from ..core.decorators.decorators import singleton
 from ..core.shared import AwsServicesToUse
 from .sdk_config import SdkConfig
 
@@ -14,7 +14,7 @@ if TYPE_CHECKING:
 class SdkManagerError(Exception):
     pass
     
-@singelton
+@singleton
 class SdkManager:
     _master_config: Optional['MasterConfig']
     _container: Optional['ApplicationContainer']
@@ -23,8 +23,8 @@ class SdkManager:
     
     
     def __init__(self,
-                 config:Optional[SdkConfig] = None
-                 ) -> None:
+                config:Optional[SdkConfig] = None
+                ) -> None:
         self._master_config = None
         self._container = None
         self._opensearch = None
@@ -39,7 +39,7 @@ class SdkManager:
     def initialize(self) -> None:
         from ..containers import ApplicationContainer
         self._container = ApplicationContainer()
-        self.container.spark.dynamic_configs_spark_client.override(provider=self.config._spark_conf)
+        self.container.core.dynamic_configs_spark_client.override(provider=self.config._spark_conf)
         
     @property
     def config(self) -> SdkConfig:

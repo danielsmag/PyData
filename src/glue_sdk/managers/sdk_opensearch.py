@@ -1,7 +1,7 @@
 from pydantic import validate_call
 from typing import Any, Dict, Optional, TYPE_CHECKING
 from glue_sdk.containers.opensearch_container import OpenSearchContainer
-from ..core.decorators.decorators import singelton
+from ..core.decorators.decorators import singleton
 
 
 if TYPE_CHECKING:
@@ -12,7 +12,7 @@ if TYPE_CHECKING:
 class SdkOpenSearchError(Exception):
     pass
 
-@singelton
+@singleton
 class SdkOpenSearch():
     def __init__(self,container: 'ApplicationContainer') -> None:
         self.container: 'ApplicationContainer' = container

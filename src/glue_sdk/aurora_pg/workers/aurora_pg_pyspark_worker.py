@@ -1,11 +1,11 @@
 from ..interfaces.i_aurora_pg_worker import IAuroraPgWorker
 from typing import Dict, Optional, List,TYPE_CHECKING, Literal
-from pyspark.sql import DataFrame
+
 from ...core.services.base_service import BaseService
 
 if TYPE_CHECKING:
     from pyspark.sql import SparkSession
-
+    from pyspark.sql import DataFrame
 class PySparkAuroraPgWorker(BaseService,IAuroraPgWorker):
     def __init__(
         self,
@@ -54,10 +54,10 @@ class PySparkAuroraPgWorker(BaseService,IAuroraPgWorker):
     def load_data(self, 
                   spark_df: 'DataFrame', 
                   table_name: str,
-                  db_name: Optional[str] = None,
-                  schema:Optional[str]= None,
-                  mode:Literal['overwrite','error','ignore','append'] = 'overwrite'
-                  ) -> bool:
+                db_name: Optional[str] = None,
+                schema:Optional[str]= None,
+                mode:Literal['overwrite','error','ignore','append'] = 'overwrite'
+                ) -> bool:
         try:
             self.log_debug(f"Loading data into table '{table_name}'")
             full_table_name: str = f"{schema}.{table_name}" 

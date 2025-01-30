@@ -1,7 +1,7 @@
 from typing import Optional, List, Literal,TYPE_CHECKING, Union, Any
 from typing_extensions import Self
 from pydantic import validate_call
-from glue_sdk.builders.data_builder_base import DataBuilderBase
+from .data_builder_base import DataBuilderBase
 from .interfaces.i_data_loader import IDataLoader
 
 

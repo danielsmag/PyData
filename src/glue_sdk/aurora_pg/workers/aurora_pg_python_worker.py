@@ -1,14 +1,15 @@
 
 from typing import Any, Dict, Optional, List, Tuple,TYPE_CHECKING, Literal
-from pyspark.sql import DataFrame
 from ...core.services.base_service import BaseService 
 from pyspark.sql.types import StructType, StructField, StringType, IntegerType, FloatType  
 from ..interfaces.i_aurora_pg_worker import IAuroraPgWorker
 
 if TYPE_CHECKING:
-    
+    from pyspark.sql import DataFrame
     from ..interfaces.i_aurora_pg_client import IAuroraPgClient
-    
+
+class Psycopg2AuroraPgWorkerError(Exception):
+    pass
 class Psycopg2AuroraPgWorker(IAuroraPgWorker, BaseService):
     __slots__: Tuple = ("config", "client", "connection_name", "spark")
 
@@ -26,11 +27,9 @@ class Psycopg2AuroraPgWorker(IAuroraPgWorker, BaseService):
             spark (SparkSession): Spark session for creating Spark DataFrames.
             connection_name (Optional[str], optional): Optional connection name. Defaults to None.
         """
-       
-    
         self.config: Dict = config
         self.client: "IAuroraPgClient" = aurora_pg_client
-               
+        
     def fetch_data(self, table_name: str, push_down_predicate: Optional[str] = None) -> 'DataFrame':
         """
         Fetches data from the Aurora PostgreSQL database as a Spark DataFrame using psycopg2.
@@ -56,6 +55,8 @@ class Psycopg2AuroraPgWorker(IAuroraPgWorker, BaseService):
             with self.client.create_client() as conn:
                 with conn.cursor() as cursor:
                     cursor.execute(query)
+                    if not cursor.description:
+                        raise Psycopg2AuroraPgWorkerError("No  cursor.description exist")
                     columns: List[Any] = [desc[0] for desc in cursor.description]
                     rows = cursor.fetchall()
                     self.log_debug(f"Fetched {len(rows)} rows from table '{table_name}'")
@@ -76,11 +77,11 @@ class Psycopg2AuroraPgWorker(IAuroraPgWorker, BaseService):
             raise
 
     def load_data(self,  
-                  spark_df: 'DataFrame', 
-                  table_name: str,
-                  db_name: Optional[str] = None,
-                  schema:Optional[str]= None,
-                  mode:Literal['overwrite','error','ignore','append'] = 'overwrite') -> bool:
+                spark_df: 'DataFrame', 
+                table_name: str,
+                db_name: Optional[str] = None,
+                schema:Optional[str]= None,
+                mode:Literal['overwrite','error','ignore','append'] = 'overwrite') -> bool:
         """
         Loads data into the Aurora PostgreSQL database from a Spark DataFrame using psycopg2.
 

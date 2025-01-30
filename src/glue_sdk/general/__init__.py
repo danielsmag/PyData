@@ -9,8 +9,6 @@ if TYPE_CHECKING:
     from .clients.secret_client import SecretClient
     from .clients.glue_client import GlueClient
 
-
-
 __all__: List[str] = [
     "S3Service",
     "S3Client",
@@ -21,9 +19,27 @@ __all__: List[str] = [
 
 def __getattr__(name):
     if name in __all__:
-        submod = importlib.import_module(f'.{name}',__name__)
-        globals()[name] = submod
-        return submod
+        match name:
+            case "S3Client":
+                submod = importlib.import_module('.clients.s3_client', __name__)
+                attr = submod.S3Client
+            case "S3Service":
+                submod = importlib.import_module('.services.s3_service', __name__)
+                attr = submod.S3Service
+            case "SecretClient":
+                submod = importlib.import_module('.clients.secret_client', __name__)
+                attr = submod.SecretClient
+            case "SecretService":
+                submod = importlib.import_module('.services.secret_service', __name__)
+                attr = submod.SecretService
+            case "GlueClient":
+                submod = importlib.import_module('.clients.glue_client', __name__)
+                attr = submod.GlueClient
+            case _:
+                raise AttributeError(f"Module {__name__} has no attribute {name}")
+            
+        globals()[name] = attr
+        return attr
     
     raise AttributeError(f"mudule {__name__} has no attribute {name}")
 

@@ -165,7 +165,7 @@ class DataCatalogService(BaseService,IDataCatalogService):
                 else:
                     error_msg: str = f"partition_by must be a string or list of strings, got {type(partition_by)}."
                     self.log_error(message=error_msg)
-                    raise DataWriterError(error_msg)
+                    raise DataCatalogServiceError(error_msg)
 
                 writer = writer.partitionBy(*partition_columns)
                 self.log_info(message=f"Set up partitioning on columns: {', '.join(partition_columns)}")

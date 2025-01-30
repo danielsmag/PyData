@@ -1,8 +1,6 @@
 
 from typing import Optional,Dict,List, Any
 import json
-from botocore.client import BaseClient
-from glue_sdk.core.logger import logger
 from pydantic import BaseModel, model_validator, ConfigDict
 
 class Secrets(BaseModel):

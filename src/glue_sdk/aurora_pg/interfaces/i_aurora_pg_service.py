@@ -1,13 +1,13 @@
 from abc import ABC, abstractmethod
 from typing import Dict, List, Optional, Tuple, TYPE_CHECKING, Literal
-from pyspark.sql import DataFrame
+
 
 __all__:List[str] = ["IAuroraPgService"]
 
 if TYPE_CHECKING:
-    from interfaces.i_client import IClient
-    from interfaces.i_aurora_pg_worker import IAuroraPgWorker
-
+    from ...core.interfaces.i_client import IClient
+    from ..interfaces.i_aurora_pg_worker import IAuroraPgWorker
+    from pyspark.sql import DataFrame
 
 
 class IAuroraPgService(ABC):
@@ -49,7 +49,7 @@ class IAuroraPgService(ABC):
         table_name: str,
         push_down_predicate: Optional[str] = None,
         worker_type: Literal['python', 'pyspark', 'glue'] = "glue",
-    ) -> DataFrame:
+    ) -> 'DataFrame':
         """
         Fetches data from the Aurora PostgreSQL database as a Spark DataFrame.
 
@@ -66,7 +66,7 @@ class IAuroraPgService(ABC):
     @abstractmethod
     def load_data(
         self, 
-        spark_df: DataFrame,
+        spark_df: 'DataFrame',
         table_name: str, 
         db_name:Optional[str] = None,
         schema: Optional[str] = None,

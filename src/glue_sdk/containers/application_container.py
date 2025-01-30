@@ -8,6 +8,7 @@ from .spark_container import SparkContainer
 from .aurora_pg_container import AuroraPgContainer
 from .data_builders_container import DataBuilderContainer
 from ..core.shared import AwsServicesToUse
+from .general_container import GeneralContainer
 
 class ApplicationContainer(containers.DeclarativeContainer):
 
@@ -19,7 +20,7 @@ class ApplicationContainer(containers.DeclarativeContainer):
     
     config  = providers.Configuration()
     
-    print("Initializing ApplicationContainer with config:", config)
+   
        
     core = providers.Container(
         container_cls=CoreContainer,
@@ -33,7 +34,7 @@ class ApplicationContainer(containers.DeclarativeContainer):
     )
     
     general = providers.Container(
-        container_cls=SparkContainer,
+        container_cls=GeneralContainer,
         config=config,
         core=core
     )
@@ -69,10 +70,10 @@ class ApplicationContainer(containers.DeclarativeContainer):
         container_cls=DataBuilderContainer,
         config=config,
         custom_dependencies=providers.DependenciesContainer(
-            data_catalog_service=data_catalog.provided.data_catalog_service if data_catalog != providers.Object(None) else None,
-            aurora_pg_service=aurora_pg.provided.aurora_pg_service if aurora_pg != providers.Object(None) else None,
-            cache=cache.provided.cache if cache != providers.Object(None) else None,
-            spark_base_service=spark.provided.base_service if spark != providers.Object(None) else None
+            data_catalog_service=data_catalog.provided.data_catalog_service if data_catalog != providers.Object(None) else None, # type: ignore
+            aurora_pg_service=aurora_pg.provided.aurora_pg_service if aurora_pg != providers.Object(None) else None, # type: ignore
+            cache=cache.provided.cache if cache != providers.Object(None) else None, # type: ignore
+            spark_base_service=spark.provided.base_service if spark != providers.Object(None) else None # type: ignore
         )
     ) if aws_services_to_use().USE_DATA_BUILDERS else providers.Object(None)
  

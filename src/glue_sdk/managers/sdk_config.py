@@ -1,15 +1,11 @@
-from ..core.decorators.decorators import singelton
 from ..core.shared import AwsServicesToUse
 from pydantic import validate_call
 from typing import Any, Dict, Optional, TYPE_CHECKING
 from ..core.master import MasterConfig 
  
-
-
 class SdkConfigError(Exception):
     pass
 
-@singelton
 class SdkConfig:
     def __init__(self,
                  aws_services_to_use:Optional['AwsServicesToUse'] = None

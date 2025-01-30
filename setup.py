@@ -27,7 +27,8 @@ setup(
         'dependency-injector>=4.44.0',
         'opensearch-py>=2.7.1',
         'redis>=5.2.1',
-        'PyYaml>=6.0.2'
+        'PyYaml>=6.0.2',
+        'boto3>=1.36.9'
     ],
     extras_require={
         'dev': [

@@ -1,12 +1,6 @@
 import pytest
-
 from glue_sdk.containers import ApplicationContainer
 from botocore.client import BaseClient
-
-
-import sys
-import os
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '../../glue_sdk/src')))
 from glue_sdk import SdkManager,SdkConfig
 
 conf = SdkConfig()
@@ -33,9 +27,8 @@ def test_cache_container():
     
 
 def test_clients():
-    
-    
-    glue_client = container.core.glue_client()
+        
+    glue_client = container.general.glue_client()
     assert isinstance(glue_client,BaseClient)
 
     s3_client = container.general.s3_client()
@@ -45,7 +38,7 @@ def test_clients():
     assert isinstance(secret_client,BaseClient)
     
 def test_core_container():
-    from glue_sdk.clients import SparkClient
+    from glue_sdk.spark.clients.spark_client import SparkClient
     from awsglue.context import GlueContext
     from pyspark.sql import SparkSession 
     from pyspark.context import SparkContext  

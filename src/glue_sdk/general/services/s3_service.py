@@ -1,12 +1,12 @@
 from botocore.exceptions import ClientError
 from typing import List, Optional, Dict, TYPE_CHECKING, Any
-from glue_sdk.models.s3path_model import S3Path
-from glue_sdk.core.decorators.decorators import handle_s3_exception
+from ...core.models.s3path_model import S3Path
+from ...core.decorators.decorators import handle_s3_exception
 import json
 import yaml
-from glue_sdk.services.base_service import BaseService
-from glue_sdk.core.logger import logger
-from glue_sdk.interfaces.i_s3_service import IS3Service
+from ...core.services.base_service import BaseService
+from ...core.logging.logger import logger
+from ..interfaces.i_s3_service import IS3Service
 
 __all__:List[str] = ["S3Service"]
 
@@ -21,10 +21,10 @@ class S3Service(IS3Service,BaseService):
 
     @handle_s3_exception()
     def load_json(self,
-                  url: str,
-                  return_on_failure: Any = None,
-                  raise_exception: bool = False
-                  )-> Dict:
+                url: str,
+                return_on_failure: Any = None,
+                raise_exception: bool = False
+                )-> Dict:
         s3path = S3Path(url=url)
         self.log_debug(f"Fetching JSON file from {s3path}")
         response: Dict = self.s3_client.get_object(Bucket=s3path.bucket, Key=s3path.key)

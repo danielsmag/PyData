@@ -1,13 +1,14 @@
 from abc import ABC, abstractmethod
-from typing import Optional, Literal
-from pyspark.sql import DataFrame
+from typing import Optional, Literal,TYPE_CHECKING
 
 
+if TYPE_CHECKING:
+    from pyspark.sql import DataFrame
 class IOpenSearchWorker(ABC):
 
     @abstractmethod
     def load_data(self,
-        df: DataFrame,
+        df: 'DataFrame',
         index: str,
         mode: Literal["overwrite", "append", "ignore", "errorifexists"] = "overwrite",
         es_batch_size_entries: Optional[int] = None,

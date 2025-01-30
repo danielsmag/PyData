@@ -1,6 +1,6 @@
-from glue_sdk.clients.base_aws_client import BaseAWSClient
+from .base_aws_client import BaseAWSClient
 from typing import Optional,TYPE_CHECKING
-from glue_sdk.core.logger import logger
+from ...core.logging.logger import logger
 
 if TYPE_CHECKING:
     from botocore.client import BaseClient

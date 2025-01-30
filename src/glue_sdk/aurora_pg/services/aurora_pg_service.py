@@ -68,9 +68,9 @@ class AuroraPgService(IAuroraPgService,BaseService):
     #     return None
     
     def fetch_data(self, table_name: str, 
-                   push_down_predicate: Optional[str] = None,
-                   worker_type: Literal['python', 'pyspark', 'glue'] ='glue'
-                   ) -> 'DataFrame':
+                push_down_predicate: Optional[str] = None,
+                worker_type: Literal['python', 'pyspark', 'glue'] ='glue'
+                ) -> 'DataFrame':
         """
         Fetches data from the Aurora PostgreSQL database as a Spark DataFrame.
         Using Glue context
@@ -85,15 +85,14 @@ class AuroraPgService(IAuroraPgService,BaseService):
         return worker.fetch_data(table_name=table_name, push_down_predicate=push_down_predicate)
         
         
-           
     def load_data(self, 
-                  spark_df: 'DataFrame', 
-                  table_name: str,
-                  db_name: Optional[str]= None,
-                  schema: Optional[str] = None,
-                  worker_type: Literal['python', 'pyspark', 'glue'] ='glue',
-                  mode:Literal['overwrite','error','ignore','append'] = 'overwrite' 
-                  ) -> bool:
+                spark_df: 'DataFrame', 
+                table_name: str,
+                db_name: Optional[str]= None,
+                schema: Optional[str] = None,
+                worker_type: Literal['python', 'pyspark', 'glue'] ='glue',
+                mode:Literal['overwrite','error','ignore','append'] = 'overwrite' 
+                ) -> bool:
         """
         Loads data into the Aurora PostgreSQL database from a Spark DataFrame.
         Using glue context

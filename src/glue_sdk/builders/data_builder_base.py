@@ -1,10 +1,11 @@
 from typing import Optional, Union, List, TYPE_CHECKING
-from pyspark.sql import DataFrame
+
 from .interfaces.i_data_builder_base import IDataBuilder
 from ..core.services.base_service import BaseService
 from ..core.utils.utils import to_camel_case
 from typing_extensions import Self
 from pydantic import validate_call
+from pyspark.sql import DataFrame
 
 if TYPE_CHECKING:
     from ..cache.interfaces.i_cache import ICache
@@ -53,12 +54,15 @@ class DataBuilderBase(IDataBuilder,BaseService):
         """
         Internal helper to ensure self.data is stored as a Spark DataFrame in self.df.
         """
+        if isinstance(self.data, DataFrame):
+            self.df = self.data
+            return
+        
         from awsglue.dynamicframe import DynamicFrame
         
         if isinstance(self.data, DynamicFrame):
             self.df = self.data.toDF()
-        elif isinstance(self.data, DataFrame):
-            self.df = self.data
+            
         else:
             error_msg: str = f"Data is neither DynamicFrame nor DataFrame. Found type: {type(self.data)}"
             self.log_error(message=error_msg)
@@ -151,9 +155,9 @@ class DataBuilderBase(IDataBuilder,BaseService):
 
     @validate_call
     def flatten_df(self,
-                   sep: str = ".",
-                   lower_case: bool = True
-                   )-> Self:
+                sep: str = ".",
+                lower_case: bool = True
+                )-> Self:
         if not self.spark_base_service:
             raise DataBuilderBaseError("U have to set up spark_base_service")
         self._ensure_df()

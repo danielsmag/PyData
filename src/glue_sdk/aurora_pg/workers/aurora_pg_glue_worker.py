@@ -1,13 +1,12 @@
 from ..interfaces.i_aurora_pg_worker import IAuroraPgWorker
 from typing import Dict, Optional, Tuple,TYPE_CHECKING, Literal
-from pyspark.sql import DataFrame
 from ...core.services.base_service import BaseService
 
 if TYPE_CHECKING:
     from ..interfaces.i_aurora_pg_client import IAuroraPgClient
     from awsglue.context import GlueContext
     from awsglue.dynamicframe import DynamicFrame
-    
+    from pyspark.sql import DataFrame
 class GlueAuroraPgWorker(IAuroraPgWorker, BaseService):
     __slots__: Tuple = ("config", "client", "connection_name", "spark")
     
@@ -23,7 +22,7 @@ class GlueAuroraPgWorker(IAuroraPgWorker, BaseService):
         self.client: "IAuroraPgClient" = aurora_pg_client
         self.connection_name = connection_name or self.config.get("connection_name", "")
     
-    def fetch_data(self, table_name: str, push_down_predicate: Optional[str] = None) -> DataFrame:
+    def fetch_data(self, table_name: str, push_down_predicate: Optional[str] = None) -> 'DataFrame':
         try:
             self.log_debug(f"Fetching data from table '{table_name}' with predicate: {push_down_predicate}")
             if not self.connection_name:
