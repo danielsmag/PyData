@@ -1,6 +1,6 @@
+from functools import cached_property
 from pydantic import validate_call
 from typing import Any, Dict, Optional, TYPE_CHECKING
-from glue_sdk.containers.opensearch_container import OpenSearchContainer
 from ..core.decorators.decorators import singleton
 
 
@@ -8,7 +8,9 @@ if TYPE_CHECKING:
     from ..containers import ApplicationContainer
     from ..containers.opensearch_container import OpenSearchContainer
     from opensearchpy import OpenSearch
-
+    from ..opensearch.services.opensearch_service import OpenSearchService
+    
+    
 class SdkOpenSearchError(Exception):
     pass
 
@@ -27,6 +29,11 @@ class SdkOpenSearch():
             raise SdkOpenSearchError("Cant intialize container.opensearch()")
         return self._opensearch_container
         
-    @property    
+    @cached_property    
     def client(self)->'OpenSearch':
         return self.opensearch_container.opensearch_client()
+    
+    @cached_property
+    def opensearch_service(self)->'OpenSearchService':
+        return self.opensearch_container.opensearch_client()    
+

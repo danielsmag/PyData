@@ -1,6 +1,6 @@
 from pydantic_settings import BaseSettings,SettingsConfigDict
 from pydantic import Field
-from typing import Optional
+from typing import Optional, Any
 from glue_sdk.core.base import RdsConfig
 
 class AuroraConfig(RdsConfig):
@@ -9,4 +9,4 @@ class AuroraConfig(RdsConfig):
         case_sensitive=False,  
         extra="allow"
     )
-    
+    test: Any=""

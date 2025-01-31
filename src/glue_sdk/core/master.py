@@ -1,3 +1,4 @@
+from __future__ import annotations
 from pydantic_settings import BaseSettings,SettingsConfigDict
 from pydantic import Field,field_validator
 from typing import Optional, TYPE_CHECKING,List,Dict, Any
@@ -9,6 +10,7 @@ from ..core.logging.logger import logger
 
 if TYPE_CHECKING:
     from glue_sdk.core.opensearch.config import OpenSearchConfig
+
 
 
 _lock = RLock()

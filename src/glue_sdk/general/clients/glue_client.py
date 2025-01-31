@@ -1,4 +1,3 @@
-from botocore.client import BaseClient
 from .base_aws_client import BaseAWSClient
 from typing import Optional, TYPE_CHECKING
 from ...core.logging.logger import logger

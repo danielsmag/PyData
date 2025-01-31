@@ -1,24 +1,26 @@
+from __future__ import annotations
 from pydantic import validate_call
 from typing import Any, Dict, Optional, TYPE_CHECKING
-
+from functools import cached_property
 
 from ..core.decorators.decorators import singleton
 from ..core.shared import AwsServicesToUse
 from .sdk_config import SdkConfig
+from ..core.master import MasterConfig 
 
 if TYPE_CHECKING:
     from ..containers import ApplicationContainer
     from .sdk_opensearch import SdkOpenSearch
-    from ..core.master import MasterConfig 
+    
     
 class SdkManagerError(Exception):
     pass
     
 @singleton
 class SdkManager:
-    _master_config: Optional['MasterConfig']
-    _container: Optional['ApplicationContainer']
-    _opensearch: Optional['SdkOpenSearch']
+    _master_config: Optional[MasterConfig]
+    _container: Optional[ApplicationContainer]
+    _opensearch: Optional[SdkOpenSearch]
     aws_services_to_use: 'AwsServicesToUse'
     
     
@@ -29,10 +31,9 @@ class SdkManager:
         self._container = None
         self._opensearch = None
         self.aws_services_to_use = AwsServicesToUse()
-        self._config: Optional[SdkConfig] = None
        
         if isinstance(config, SdkConfig):
-            self._config = config
+            self._config: SdkConfig = config
         else:
             self._config = SdkConfig()        
         
@@ -43,30 +44,30 @@ class SdkManager:
         
     @property
     def config(self) -> SdkConfig:
+        """Returns the SDK configuration, initializing it if necessary."""
         if not self._config:
             self._config = SdkConfig()
         if not self._config:    
             raise SdkManagerError("Cant intialize SdkConfig")
         return self._config
-    
    
     @config.setter
     def config(self, v: Optional[SdkConfig]) ->None:
-        print(f"Debug: SdkConfig Type: {type(SdkConfig)}")  
-        print(f"Debug: Config Value: {v}, Type: {type(v)}") 
         if isinstance(v, SdkConfig): 
             self._config = v
         else:
             raise SdkManagerError("Invalid configuration type")
         
-    @property
-    def container(self) -> 'ApplicationContainer':
+    @cached_property
+    def container(self) -> ApplicationContainer:
+        """Returns the application container, ensuring it has been initialized."""
         if not self._container:
-            raise SdkManagerError("U must call initialize func firstlly")
+            raise SdkManagerError("U must call initialize func firstly")
         return self._container
         
-    @property
-    def opensearch(self) -> 'SdkOpenSearch':
+    @cached_property
+    def opensearch(self) -> SdkOpenSearch:
+        """Returns the OpenSearch SDK, initializing it if necessary."""
         if not self.aws_services_to_use.USE_OPENSEARCH:
             raise SdkManagerError("U have to enable OpenSearch resource")
         if not self._opensearch:
