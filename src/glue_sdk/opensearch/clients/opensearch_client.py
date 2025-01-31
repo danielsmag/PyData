@@ -1,3 +1,4 @@
+from __future__ import annotations
 from typing import Optional, Tuple, TYPE_CHECKING
 from ...core.interfaces.i_client import IClient
 from ...core.logging.logger import logger
@@ -40,18 +41,18 @@ class OpenSearchClient(IClient):
         self.timeout: int = timeout
         self.max_retries: int = max_retries
         self.retry_on_timeout: bool = retry_on_timeout
-        self._client: Optional["OpenSearch"] = None
+        self._client: Optional[OpenSearch] = None
 
     @property
-    def client(self) -> "OpenSearch":
+    def client(self) -> OpenSearch:
         self.create_client()
         if not self._client:
             raise Exception("cant return opensearch client")
         return self._client
         
-    def create_client(self) -> "OpenSearch":
+    def create_client(self) -> OpenSearch:
         try:
-            from opensearchpy import RequestsHttpConnection
+            from opensearchpy import RequestsHttpConnection,OpenSearch
             logger.debug("Initializing new OpenSearch client.")
 
             self._client = OpenSearch(

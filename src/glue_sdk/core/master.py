@@ -2,28 +2,24 @@ from __future__ import annotations
 from pydantic_settings import BaseSettings,SettingsConfigDict
 from pydantic import Field,field_validator
 from typing import Optional, TYPE_CHECKING,List,Dict, Any
-from threading import RLock
 from ..core.cache.config import CacheConfig
 from ..core.base import Sources,Output
 from .config_loader import ConfigLoader
 from ..core.logging.logger import logger
+from .decorators.decorators import singleton
 
 if TYPE_CHECKING:
     from glue_sdk.core.opensearch.config import OpenSearchConfig
 
 
-
-_lock = RLock()
-_singleton_settings = None
-
-
+@singleton
 class MasterConfig(BaseSettings):
     model_config = SettingsConfigDict(
         frozen=False,           
         case_sensitive=False,
         extra="allow"  
     )
-    
+    app_name: str = Field(default="default_app_name")
     env: str = Field(default="", description="Environment (e.g., dev, prod, staging, local)")
     version: str = Field(default="", description="Version of the configuration")
     opensearch: Optional["OpenSearchConfig"]=Field(default=None,description="Opensearch settings") 

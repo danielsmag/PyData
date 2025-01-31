@@ -6,19 +6,20 @@ from ...core.models.results_model import FuncResult
 from ..logging.logger import logger
 import time
 from botocore.exceptions import ClientError
+from threading import RLock
 
-
-def singleton(cls):
-    """safe threads singleton decorator"""
-    _instance_lock = threading.Lock()
-    _instance = {}
+_singleton_lock = RLock()
+_singleton_instances = {} 
     
+def singleton(cls):
+    """Thread-safe singleton decorator"""
     @wraps(cls)
     def get_instance(*args, **kwargs):
-        with _instance_lock:
-            if cls not in _instance:
-                _instance[cls] =cls(*args,**kwargs)
-        return _instance[cls]
+        if cls not in _singleton_instances:
+            with _singleton_lock:
+                if cls not in _singleton_instances:  
+                    _singleton_instances[cls] = cls(*args, **kwargs)
+        return _singleton_instances[cls]
     
     return get_instance
 

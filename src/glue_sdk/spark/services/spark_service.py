@@ -1,24 +1,27 @@
+
+
 from typing import (
     List,
     Dict,
     TYPE_CHECKING
 )
 
-from typing import TYPE_CHECKING
-from pyspark.sql import DataFrame
 import pyspark.sql.functions as F
 from ..interfaces.i_spark_base_service import ISparkBaseService
 from ...core.services.base_service import BaseService
+
+if TYPE_CHECKING:
+    from pyspark.sql import DataFrame
 
 class SparkBaseService(ISparkBaseService, BaseService):
     def __init__(self) -> None:
         pass
     
     def flatten_df(self,
-                   df: DataFrame,
-                   sep: str = ".",
-                   lower_case: bool = True
-                   ) -> DataFrame:
+                df: "DataFrame",
+                sep: str = ".",
+                lower_case: bool = True
+                ) -> "DataFrame":
         """
         Flatten a nested DataFrame schema and include levels in headers.
 

@@ -6,7 +6,8 @@ from glue_sdk import SdkManager,SdkConfig
 conf = SdkConfig()
 conf.set_services_to_use(
     USE_CACHE=True,
-    USE_DATA_CATALOG=True
+    USE_DATA_CATALOG=True,
+
 )
 conf.set_spark_conf(config_data={})
 sdk = SdkManager(config=conf)
@@ -54,6 +55,8 @@ def test_core_container() -> None:
     
     glue_context = container.core.glue_context()
     assert isinstance(glue_context,GlueContext)
-   
+    
+    spark_client.stop()
+    
 if __name__ == "__main__":
     pytest.main()

@@ -1,14 +1,19 @@
+from __future__ import annotations
 from typing import Dict, List, Optional, Tuple,Literal,TYPE_CHECKING
 from pyspark.sql import DataFrame
 from pydantic import validate_call
 from ...core.services.base_service import BaseService
 from ..interfaces.i_opensearch_service import IOpenSearchService
 from ...core.logging.logger import logger
+from glue_sdk.core.shared import AwsServicesToUse
+
 
 if TYPE_CHECKING:
     from ..interfaces.i_opensearch_worker import IOpenSearchWorker
     from opensearchpy import OpenSearch
     from awsglue.context import GlueContext
+
+aws_services_to_use = AwsServicesToUse()
     
 class OpenSearchServiceError(Exception):
     pass
@@ -16,23 +21,27 @@ class OpenSearchServiceError(Exception):
 
 class OpenSearchService(IOpenSearchService,BaseService):
 
-    __slots__: Tuple = ("glue_context", "client")
-
     def __init__(
         self,
-        glue_context: "GlueContext",
         opensearch_config: Dict,
-        opensearch_client: "OpenSearch",
-        opensearch_pyspark_worker: Optional["IOpenSearchWorker"] = None,
-        opensearch_glue_worker: Optional["IOpenSearchWorker"] = None
+        opensearch_client: OpenSearch,
+        opensearch_pyspark_worker: Optional[IOpenSearchWorker] = None,
+        opensearch_glue_worker: Optional[IOpenSearchWorker] = None
         ) -> None:
         self.opensearch_config: Dict = opensearch_config
-        self.glue_context: "GlueContext" = glue_context
-        self.client: "OpenSearch" = opensearch_client
-        self._worker_instances:Dict[str, Optional["IOpenSearchWorker"]] = {
-            "glue": opensearch_glue_worker,
-            "pyspark":opensearch_pyspark_worker
+        self.client: OpenSearch = opensearch_client
+        
+        if aws_services_to_use.USE_GLUE and opensearch_glue_worker is None:
+            raise OpenSearchServiceError("AWS Glue is enabled but no OpenSearch Glue worker is provided.")
+
+        if aws_services_to_use.USE_SPARK and opensearch_pyspark_worker is None:
+            raise OpenSearchServiceError("AWS Spark is enabled but no OpenSearch PySpark worker is provided.")
+
+        self._worker_instances: Dict[str, Optional[IOpenSearchWorker]] = {
+            "glue": opensearch_glue_worker if aws_services_to_use.USE_GLUE else None,
+            "pyspark": opensearch_pyspark_worker if aws_services_to_use.USE_SPARK else None
         }
+
     
 
     def load_data(
@@ -44,7 +53,8 @@ class OpenSearchService(IOpenSearchService,BaseService):
         mode: Literal["overwrite", "append", "ignore", "errorifexists"] = "overwrite"
         ) -> bool:
      
-        worker: "IOpenSearchWorker | None" = self._worker_instances.get(worker_mode)
+        worker: IOpenSearchWorker | None = self._worker_instances.get(worker_mode)
+        
         if not worker:
             raise ValueError(f"Unsupported mode: {worker_mode}")
         

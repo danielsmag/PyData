@@ -9,3 +9,6 @@ class AwsServicesToUse:
     USE_DATA_CATALOG: bool = False
     USE_CACHE: bool = True
     USE_DATA_BUILDERS: bool = True
+    USE_GLUE: bool = True
+    USE_SPARK: bool = True
+    USE_EMR: bool = False

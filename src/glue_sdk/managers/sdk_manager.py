@@ -48,7 +48,7 @@ class SdkManager:
         if not self._config:
             self._config = SdkConfig()
         if not self._config:    
-            raise SdkManagerError("Cant intialize SdkConfig")
+            raise SdkManagerError("Cant initialize SdkConfig")
         return self._config
    
     @config.setter
