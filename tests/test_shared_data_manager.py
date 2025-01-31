@@ -1,6 +1,6 @@
 from threading import Thread
 import pytest
-from glue_sdk.services.shared_memory_service import SharedDataService
+from glue_sdk.cache.services.shared_data_service import SharedDataService
 
 @pytest.fixture(autouse=True)
 def reset_manager():

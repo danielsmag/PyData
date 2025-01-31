@@ -1,16 +1,14 @@
 from typing import List, TYPE_CHECKING
 import importlib
-
-
-import importlib
-from typing import List, TYPE_CHECKING
+from .services.opensearch_service import OpenSearchService
 
 if TYPE_CHECKING:
     from .clients.opensearch_client import OpenSearchClient
     from .services.opensearch_service import OpenSearchService
     from .workers.opensearch_glue_worker import OpenSearchGlueWorker
     from .workers.opensearch_pyspark_worker import OpenSearchPySparkWorker
-
+    
+    
 __all__: List[str] = [
     "OpenSearchClient",
     "OpenSearchService",

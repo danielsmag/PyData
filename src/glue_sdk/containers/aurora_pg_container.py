@@ -1,5 +1,5 @@
 from dependency_injector import containers, providers
-from ..core.shared import AwsServicesToUse
+from ..core.shared import ServicesEnabled
 from ..aurora_pg import (
         AuroraPgClient,
         GlueAuroraPgWorker,
@@ -15,7 +15,7 @@ class AuroraPgContainer(containers.DeclarativeContainer):
     core = providers.DependenciesContainer()
     config = providers.Configuration()       
     
-    aws_services_to_use = providers.Object(AwsServicesToUse())
+    aws_services_to_use = providers.Object(ServicesEnabled())
     
     
     aurora_pg_secrets = providers.Callable(

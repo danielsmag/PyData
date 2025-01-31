@@ -8,6 +8,7 @@ import time
 from botocore.exceptions import ClientError
 from threading import RLock
 
+
 _singleton_lock = RLock()
 _singleton_instances = {} 
     

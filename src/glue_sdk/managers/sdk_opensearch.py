@@ -1,8 +1,6 @@
-from functools import cached_property
-from pydantic import validate_call
+from __future__ import annotations
 from typing import Any, Dict, Optional, TYPE_CHECKING
 from ..core.decorators.decorators import singleton
-
 
 if TYPE_CHECKING:
     from ..containers import ApplicationContainer
@@ -14,6 +12,7 @@ if TYPE_CHECKING:
 class SdkOpenSearchError(Exception):
     pass
 
+
 @singleton
 class SdkOpenSearch():
     def __init__(self,container: 'ApplicationContainer') -> None:
@@ -23,17 +22,19 @@ class SdkOpenSearch():
     @property
     def opensearch_container(self)->'OpenSearchContainer':
         if not self._opensearch_container:
-            opc: Optional['OpenSearchContainer'] = self.container.opensearch() # type: ignore
-            if opc:
-                self._opensearch_container=opc
-            raise SdkOpenSearchError("Cant intialize container.opensearch()")
+            print("DEBUG: self.container.opensearch:", self.container.opensearch) 
+            opc: Optional[OpenSearchContainer] = self.container.opensearch() # type: ignore
+            if not opc:
+                raise SdkOpenSearchError("Cant intialize container.opensearch()")
+            self._opensearch_container=opc
+            
         return self._opensearch_container
-        
-    @cached_property    
+
+    @property    
     def client(self)->'OpenSearch':
-        return self.opensearch_container.opensearch_client()
+        return self.container.opensearch.opensearch_client()
     
-    @cached_property
+    @property
     def opensearch_service(self)->'OpenSearchService':
-        return self.opensearch_container.opensearch_client()    
+        return self.container.opensearch.opensearch_service()    
 

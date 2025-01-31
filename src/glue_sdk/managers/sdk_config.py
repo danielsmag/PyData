@@ -1,23 +1,24 @@
 from __future__ import annotations
-from ..core.shared import AwsServicesToUse
+from ..core.shared import ServicesEnabled
 from pydantic import validate_call
 from typing import Any, Dict, Optional, TYPE_CHECKING
-from ..core.master import MasterConfig 
+from ..core.master import MasterConfig
 from ..core.decorators.decorators import singleton
+
 
 class SdkConfigError(Exception):
     pass
 
+
 class SdkConfig:
-    def __init__(self,
-                aws_services_to_use: Optional['AwsServicesToUse'] = None
-                ) -> None:
-        self.aws_services_to_use: 'AwsServicesToUse' = aws_services_to_use or AwsServicesToUse()
+    def __init__(self, services_enabled: Optional["ServicesEnabled"] = None) -> None:
+        self.services_enabled: ServicesEnabled = services_enabled or ServicesEnabled()
         self._conf: Optional[Dict] = None
         self._spark_conf: Dict = {}
-        
+
     @validate_call
-    def set_services_to_use(self,
+    def set_services_to_use(
+        self,
         USE_OPENSEARCH: bool = False,
         USE_DATA_CATALOG: bool = False,
         USE_AURORA_PG: bool = False,
@@ -27,15 +28,17 @@ class SdkConfig:
         USE_SPARK: bool = True,
         USE_EMR: bool = False,
     ) -> None:
-        """Set AWS services to use in the SDK."""
-        self.aws_services_to_use.USE_OPENSEARCH = USE_OPENSEARCH
-        self.aws_services_to_use.USE_DATA_CATALOG = USE_DATA_CATALOG
-        self.aws_services_to_use.USE_AURORA_PG = USE_AURORA_PG
-        self.aws_services_to_use.USE_CACHE = USE_CACHE
-        self.aws_services_to_use.USE_DATA_BUILDERS = USE_DATA_BUILDERS
-        self.aws_services_to_use.USE_GLUE = USE_GLUE
-        self.aws_services_to_use.USE_SPARK = USE_SPARK
-        self.aws_services_to_use.USE_EMR = USE_EMR
+
+        self.services_enabled.update_values(
+            USE_OPENSEARCH=USE_OPENSEARCH,
+            USE_DATA_CATALOG=USE_DATA_CATALOG,
+            USE_AURORA_PG=USE_AURORA_PG,
+            USE_CACHE=USE_CACHE,
+            USE_DATA_BUILDERS=USE_DATA_BUILDERS,
+            USE_GLUE=USE_GLUE,
+            USE_SPARK=USE_SPARK,
+            USE_EMR=USE_EMR,
+        )
 
     @validate_call
     def set_config_application(self, config_data: Dict = {}) -> None:
@@ -51,34 +54,32 @@ class SdkConfig:
 
     @property
     def USE_OPENSEARCH(self) -> bool:
-        return self.aws_services_to_use.USE_OPENSEARCH
+        return self.services_enabled.USE_OPENSEARCH
 
     @property
     def USE_AURORA_PG(self) -> bool:
-        return self.aws_services_to_use.USE_AURORA_PG
+        return self.services_enabled.USE_AURORA_PG
 
     @property
     def USE_CACHE(self) -> bool:
-        return self.aws_services_to_use.USE_CACHE
+        return self.services_enabled.USE_CACHE
 
     @property
     def USE_DATA_CATALOG(self) -> bool:
-        return self.aws_services_to_use.USE_DATA_CATALOG
+        return self.services_enabled.USE_DATA_CATALOG
 
     @property
     def USE_DATA_BUILDERS(self) -> bool:
-        return self.aws_services_to_use.USE_DATA_BUILDERS
+        return self.services_enabled.USE_DATA_BUILDERS
 
     @property
     def USE_GLUE(self) -> bool:
-        return self.aws_services_to_use.USE_GLUE
+        return self.services_enabled.USE_GLUE
 
     @property
     def USE_SPARK(self) -> bool:
-        return self.aws_services_to_use.USE_SPARK
+        return self.services_enabled.USE_SPARK
 
     @property
     def USE_EMR(self) -> bool:
-        return self.aws_services_to_use.USE_EMR
-
- 
+        return self.services_enabled.USE_EMR

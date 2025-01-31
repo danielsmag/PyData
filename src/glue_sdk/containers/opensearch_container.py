@@ -1,7 +1,7 @@
 from dependency_injector import containers, providers
 from typing import List
 
-from ..opensearch import (
+from glue_sdk.opensearch import (
     OpenSearchClient,
     OpenSearchService,
     OpenSearchGlueWorker,
@@ -28,13 +28,13 @@ class OpenSearchContainer(containers.DeclarativeContainer):
         opensearch_pass=opensearch_secrets.provided.password,
     )
 
-    # opensearch_client = providers.Resource(
-    #     provides=lambda client_wrapper: client_wrapper.create_client(),
-    #     client_wrapper=opensearch_client_factory
-    # )
     opensearch_client = providers.Resource(
-        provides=opensearch_client_factory.provided.client,
+        provides=lambda client_wrapper: client_wrapper.create_client(),
+        client_wrapper=opensearch_client_factory
     )
+    # opensearch_client = providers.Resource(
+    #     provides=opensearch_client_factory.provided.client,
+    # )
     
     opensearch_pyspark_worker = providers.Factory(
         provides=OpenSearchPySparkWorker,

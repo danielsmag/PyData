@@ -1,16 +1,7 @@
 from __future__ import annotations
 from typing import Dict, Optional, TYPE_CHECKING
 from ...core.logging.logger import logger
-from glue_sdk.core.shared import AwsServicesToUse
-
-aws_services_to_use = AwsServicesToUse()
-
-if aws_services_to_use.USE_SPARK:
-    from pyspark.sql import SparkSession
-    from pyspark.context import SparkContext
-
-if aws_services_to_use.USE_GLUE:
-    from awsglue.context import GlueContext
+from glue_sdk.core.shared import ServicesEnabled
 
 if TYPE_CHECKING:
     from pyspark.sql import SparkSession
@@ -50,7 +41,7 @@ class SparkClient:
         emr_configs: Dict[str, str] = {
             "spark.hadoop.fs.s3.impl": "org.apache.hadoop.fs.s3a.S3AFileSystem",
             "spark.hadoop.fs.s3a.aws.credentials.provider": "com.amazonaws.auth.DefaultAWSCredentialsProviderChain"
-        } if aws_services_to_use.USE_EMR else {}
+        } if ServicesEnabled().USE_EMR else {}
 
         return {**iceberg_configs, **adaptive_configs, **self.dynamic_configs_spark_client, **emr_configs}
 
@@ -64,7 +55,7 @@ class SparkClient:
 
     @property
     def glue_context(self) -> GlueContext:
-        if not aws_services_to_use.USE_GLUE:
+        if not ServicesEnabled().USE_GLUE:
             raise SparkClientError("GlueContext is not available in a non-Glue environment.")
         if not self._glue_context:
             self._initialize_glue_context()
@@ -84,13 +75,15 @@ class SparkClient:
 
     def _initialize_spark_context(self) -> None:
         """Initialize SparkContext before GlueContext."""
+        from pyspark.context import SparkContext
         if not self._spark_context:
             self._spark_context = SparkContext.getOrCreate()
             logger.debug("Created SparkContext.")
 
     def _initialize_glue_context(self) -> None:
         """Ensure SparkContext is initialized first, then initialize GlueContext."""
-        if not aws_services_to_use.USE_GLUE:
+        from awsglue.context import GlueContext
+        if not ServicesEnabled().USE_GLUE:
             raise SparkClientError("GlueContext cannot be used in a non-Glue environment.")
 
         if not self._spark_context:
@@ -112,13 +105,13 @@ class SparkClient:
         if not self._spark_context:
             self._initialize_spark_context()
 
-        if aws_services_to_use.USE_GLUE:
+        if ServicesEnabled().USE_GLUE:
             if not self._glue_context:
                 self._initialize_glue_context()
             self._spark_session = self._glue_context.spark_session
             logger.debug("SparkSession initialized for Glue.")
 
-        elif aws_services_to_use.USE_EMR:
+        elif ServicesEnabled().USE_EMR:
             from glue_sdk.core.master import MasterConfig
             conf = MasterConfig()
             self._spark_session = (

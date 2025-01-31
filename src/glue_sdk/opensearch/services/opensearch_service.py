@@ -5,7 +5,7 @@ from pydantic import validate_call
 from ...core.services.base_service import BaseService
 from ..interfaces.i_opensearch_service import IOpenSearchService
 from ...core.logging.logger import logger
-from glue_sdk.core.shared import AwsServicesToUse
+from glue_sdk.core.shared import ServicesEnabled
 
 
 if TYPE_CHECKING:
@@ -13,7 +13,7 @@ if TYPE_CHECKING:
     from opensearchpy import OpenSearch
     from awsglue.context import GlueContext
 
-aws_services_to_use = AwsServicesToUse()
+
     
 class OpenSearchServiceError(Exception):
     pass
@@ -30,6 +30,7 @@ class OpenSearchService(IOpenSearchService,BaseService):
         ) -> None:
         self.opensearch_config: Dict = opensearch_config
         self.client: OpenSearch = opensearch_client
+        aws_services_to_use = ServicesEnabled()
         
         if aws_services_to_use.USE_GLUE and opensearch_glue_worker is None:
             raise OpenSearchServiceError("AWS Glue is enabled but no OpenSearch Glue worker is provided.")

@@ -1,6 +1,6 @@
 import pytest
 from pydantic import ValidationError
-from glue_sdk.models.s3path_model import S3Path
+from glue_sdk.core.models.s3path_model import S3Path
 
 @pytest.mark.parametrize(
     "url,expected_bucket,expected_key,expected_parent,expected_scheme,expected_is_dir", [
