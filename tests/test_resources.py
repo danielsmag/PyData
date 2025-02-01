@@ -4,11 +4,11 @@ import pytest
 from glue_sdk.cache.services.shared_data_service import SharedDataService
 from glue_sdk.containers import ApplicationContainer
 from botocore.client import BaseClient
-from glue_sdk import SdkManager, SdkConfig
-from glue_sdk.managers.sdk_cache import SdkCache
+from glue_sdk import SdkManager, SdkConf
+from glue_sdk.sdk.sdk_cache import SdkCache
 
 
-conf = SdkConfig()
+conf = SdkConf()
 conf.set_services_to_use(USE_CACHE=True, USE_DATA_CATALOG=True, USE_OPENSEARCH=True)
 sdk = SdkManager(config=conf)
 sdk.initialize()
@@ -30,7 +30,7 @@ def test_cache_container():
 
 
 def test_clients() -> None:
-    conf = SdkConfig()
+    conf = SdkConf()
     # conf.set_services_to_use(
     #     USE_CACHE=False,
     #     USE_DATA_CATALOG=False,

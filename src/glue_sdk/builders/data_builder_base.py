@@ -1,38 +1,46 @@
-from typing import Optional, Union, List, TYPE_CHECKING
+from __future__ import annotations
 
-from .interfaces.i_data_builder_base import IDataBuilder
+from typing import TYPE_CHECKING, List, Optional, Union
+
+from pydantic import validate_call
+from typing_extensions import Self
+
 from ..core.services.base_service import BaseService
 from ..core.utils.utils import to_camel_case
-from typing_extensions import Self
-from pydantic import validate_call
-from pyspark.sql import DataFrame
+from .interfaces.i_data_builder_base import IDataBuilder
 
 if TYPE_CHECKING:
-    from ..cache.interfaces.i_cache import ICache
-    from ..glue_data_catalog.interfaces.i_data_catalog_service import IDataCatalogService
-    from ..aurora_pg.interfaces.i_aurora_pg_service import IAuroraPgService
     from awsglue.dynamicframe import DynamicFrame
-    from ..spark.interfaces.i_spark_base_service import ISparkBaseService
     from pyspark.sql.dataframe import DataFrame
-    
-        
-__all__:List[str] = ['DataBuilderBase']
+
+    from ..aurora_pg.interfaces.i_aurora_pg_service import IAuroraPgService
+    from ..cache.interfaces.i_cache import ICache
+    from ..glue_data_catalog.interfaces.i_data_catalog_service import (
+        IDataCatalogService,
+    )
+    from ..spark.interfaces.i_spark_base_service import ISparkBaseService
+
+
+__all__: List[str] = ["DataBuilderBase"]
+
 
 class DataBuilderBaseError(Exception):
     """Base exception for DataCatalog operations."""
+
     pass
 
 
-class DataBuilderBase(IDataBuilder,BaseService):
+class DataBuilderBase(IDataBuilder, BaseService):
     """
     Base class for DataCatalog operations, providing shared methods and attributes.
     """
+
     def __init__(
         self,
-        data_catalog_service: Optional["IDataCatalogService"]=None,
-        aurora_pg_service: Optional["IAuroraPgService"]= None,
-        spark_base_service: Optional["ISparkBaseService"] = None,
-        cache: Optional["ICache"] = None
+        data_catalog_service: Optional[IDataCatalogService] = None,
+        aurora_pg_service: Optional[IAuroraPgService] = None,
+        spark_base_service: Optional[ISparkBaseService] = None,
+        cache: Optional["ICache"] = None,
     ) -> None:
         """
         Initialize the base DataCatalog class.
@@ -41,12 +49,12 @@ class DataBuilderBase(IDataBuilder,BaseService):
         :param cache: Optional shared cache for storing and retrieving Spark data
         """
         super().__init__()
-        self.aurora_pg_service: Optional['IAuroraPgService'] = aurora_pg_service
-        self.data_catalog_service: Optional["IDataCatalogService"] = data_catalog_service
-        self.spark_base_service: Optional["ISparkBaseService"] = spark_base_service
+        self.aurora_pg_service: Optional[IAuroraPgService] = aurora_pg_service
+        self.data_catalog_service: Optional[IDataCatalogService] = data_catalog_service
+        self.spark_base_service: Optional[ISparkBaseService] = spark_base_service
         self.cache: Optional["ICache"] = cache
-        self.data: Optional[Union["DynamicFrame", 'DataFrame']] = None
-        self.df: Optional['DataFrame'] = None
+        self.data: Optional[Union[DynamicFrame, DataFrame]] = None
+        self.df: Optional["DataFrame"] = None
         self.db_name: Optional[str] = None
         self.table_name: Optional[str] = None
 
@@ -54,17 +62,20 @@ class DataBuilderBase(IDataBuilder,BaseService):
         """
         Internal helper to ensure self.data is stored as a Spark DataFrame in self.df.
         """
+        from awsglue.dynamicframe import DynamicFrame
+        from pyspark.sql import DataFrame
+
         if isinstance(self.data, DataFrame):
             self.df = self.data
             return
-        
-        from awsglue.dynamicframe import DynamicFrame
-        
+
         if isinstance(self.data, DynamicFrame):
             self.df = self.data.toDF()
-            
+
         else:
-            error_msg: str = f"Data is neither DynamicFrame nor DataFrame. Found type: {type(self.data)}"
+            error_msg: str = (
+                f"Data is neither DynamicFrame nor DataFrame. Found type: {type(self.data)}"
+            )
             self.log_error(message=error_msg)
             raise DataBuilderBaseError(error_msg)
 
@@ -72,8 +83,12 @@ class DataBuilderBase(IDataBuilder,BaseService):
         """
         Ensures that self.df is set. Raises DataCatalogError if not.
         """
+        from pyspark.sql import DataFrame
+
         if self.df is None:
-            error_msg = "DataFrame is not set. Use the appropriate method to set data first."
+            error_msg = (
+                "DataFrame is not set. Use the appropriate method to set data first."
+            )
             self.log_error(message=error_msg)
             raise DataBuilderBaseError(error_msg)
         if not isinstance(self.df, DataFrame):
@@ -88,11 +103,13 @@ class DataBuilderBase(IDataBuilder,BaseService):
         :return: self
         :raises DataCatalogError: if self.df is not a valid Spark DataFrame
         """
+        from pyspark.sql import DataFrame
+
         if not isinstance(self.df, DataFrame):
             error_msg = "to_camel_case_headers() requires a Spark DataFrame in self.df."
             self.log_error(message=error_msg)
             raise DataBuilderBaseError(error_msg)
-        
+
         camel_case_cols: List[str] = to_camel_case(columns=self.df.columns)
         self.df = self.df.toDF(*camel_case_cols)
         self.log_info("Converted DataFrame headers to camelCase.")
@@ -107,24 +124,26 @@ class DataBuilderBase(IDataBuilder,BaseService):
         :return: self
         :raises DataCatalogError: if no cache is configured or self.df is invalid
         """
+        from pyspark.sql import DataFrame
+
         if not (key or self.table_name):
             error_msg = "no key and not table_name exist"
             self.log_error(message=error_msg)
             raise DataBuilderBaseError(error_msg)
-        
+
         if not isinstance(self.df, DataFrame):
             error_msg = "cache_data() requires a Spark DataFrame in self.df."
             self.log_error(message=error_msg)
             raise DataBuilderBaseError(error_msg)
-        
+
         if not self.cache:
             error_msg = "Caching requested but no cache is configured."
             self.log_error(message=error_msg)
             raise DataBuilderBaseError(error_msg)
 
         self._ensure_df()
-        cache_key: str = key or self.table_name # type: ignore
-        
+        cache_key: str = key or self.table_name  # type: ignore
+
         self.cache.set(key=cache_key, value=self.df)
         self.log_info(message=f"Cached DataFrame with key: {cache_key}")
         return self
@@ -142,29 +161,23 @@ class DataBuilderBase(IDataBuilder,BaseService):
             error_msg = "Attempted to load from cache, but no cache is configured."
             self.log_error(message=error_msg)
             raise DataBuilderBaseError(error_msg)
-        
+
         cached_data = self.cache.get(key=key)
         if cached_data is None:
             error_msg = f"No data found in cache for key: {key}"
             self.log_error(message=error_msg)
             raise DataBuilderBaseError(error_msg)
-        
+
         self.data = cached_data
         self.log_debug(message=f"Loaded data from cache with key: {key}")
         return self
 
     @validate_call
-    def flatten_df(self,
-                sep: str = ".",
-                lower_case: bool = True
-                )-> Self:
+    def flatten_df(self, sep: str = ".", lower_case: bool = True) -> Self:
         if not self.spark_base_service:
             raise DataBuilderBaseError("U have to set up spark_base_service")
         self._ensure_df()
         self.spark_base_service.flatten_df(
-            df=self.df, # type: ignore
-            sep=sep,
-            lower_case=lower_case
+            df=self.df, sep=sep, lower_case=lower_case  # type: ignore
         )
         return self
-    

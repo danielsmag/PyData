@@ -1,16 +1,19 @@
 from __future__ import annotations
-from importlib import import_module
 from typing import List, TYPE_CHECKING
-
-if TYPE_CHECKING:
-    from .sdk import SdkManager
-    from .sdk import SdkConf
+from .sdk_manager import SdkManager
+from .sdk_config import SdkConf
+from importlib import import_module
 
 __all__: List[str] = ["SdkManager", "SdkConf"]
 
+
+if TYPE_CHECKING:
+    from .sdk_manager import SdkManager
+    from .sdk_config import SdkConf
+
 _dynamic_imports: dict[str, tuple[str, str]] = {
-    "SdkManager": (__spec__.parent, ".sdk"),
-    "SdkConf": (__spec__.parent, ".sdk"),
+    "SdkManager": (__spec__.parent, ".sdk_manager"),
+    "SdkConf": (__spec__.parent, ".sdk_config"),
 }
 _deprecated_dynamic_imports = set()
 
@@ -27,15 +30,13 @@ def __getattr__(attr_name: str) -> object:
     package, module_name = dynamic_attr
 
     if module_name == "__module__":
-        # Import the entire module as an attribute.
+
         result = import_module(f".{attr_name}", package=package)
-        globals()[attr_name] = result  # Cache for subsequent accesses.
+        globals()[attr_name] = result
         return result
     else:
-        # Import the specified module and extract the desired attribute.
         module = import_module(module_name, package=package)
         result = getattr(module, attr_name)
-        # Cache all non-deprecated attributes that come from this module.
         g = globals()
         for k, (_, v_module_name) in _dynamic_imports.items():
             if v_module_name == module_name and k not in _deprecated_dynamic_imports:

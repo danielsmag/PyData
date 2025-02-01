@@ -1,26 +1,27 @@
 from threading import RLock
 from functools import wraps
 
-_singleton_lock = RLock()
-_singleton_instances = {}
+
+class SingletonMeta(type):
+    """
+    A thread-safe implementation of a Singleton metaclass.
+    """
+
+    _instances = {}
+    _lock = RLock()  # Lock object to synchronize threads during first access
+
+    def __call__(cls, *args, **kwargs):
+        # First, check if the instance already exists (without acquiring the lock)
+        if cls not in cls._instances:
+            with cls._lock:
+                # Double-check if the instance was created while waiting for the lock
+                if cls not in cls._instances:
+                    instance = super().__call__(*args, **kwargs)
+                    cls._instances[cls] = instance
+        return cls._instances[cls]
 
 
-def singleton(cls):
-    """Thread-safe singleton decorator"""
-
-    @wraps(cls)
-    def get_instance(*args, **kwargs):
-        if cls not in _singleton_instances:
-            with _singleton_lock:
-                if cls not in _singleton_instances:
-                    _singleton_instances[cls] = cls(*args, **kwargs)
-        return _singleton_instances[cls]
-
-    return get_instance
-
-
-@singleton
-class ServicesEnabled:
+class ServicesEnabled(metaclass=SingletonMeta):
     def __init__(self):
         self._lock = RLock()
         self.USE_OPENSEARCH = False
@@ -51,11 +52,21 @@ class ServicesEnabled:
                         f"'{key}' is not a valid attribute of ServicesEnabled"
                     )
 
+    @classmethod
+    def reset(cls):
+        """
+        Resets the singleton instance, causing a new instance to be created upon next instantiation.
+        Use with caution, as this will remove the existing singleton instance.
+        """
+        with SingletonMeta._lock:
+            if cls in SingletonMeta._instances:
+                del SingletonMeta._instances[cls]
+
     def reset_to_defaults(self):
         """
         Resets all configuration attributes to their default values in a thread-safe manner.
         """
-        defaults = {
+        defaults: dict[str, bool] = {
             "USE_OPENSEARCH": False,
             "USE_AURORA_PG": False,
             "USE_DATA_CATALOG": False,
@@ -85,30 +96,3 @@ class ServicesEnabled:
                 f"USE_EMR={self.USE_EMR}",
             )
             return f"ServicesEnabled({', '.join(attrs)})"
-
-
-# class ServicesEnabled:
-#     USE_OPENSEARCH: bool = False
-#     USE_AURORA_PG: bool = False
-#     USE_DATA_CATALOG: bool = False
-#     USE_CACHE: bool = True
-#     USE_DATA_BUILDERS: bool = True
-#     USE_GLUE: bool = True
-#     USE_SPARK: bool = True
-#     USE_EMR: bool = False
-
-#     @staticmethod
-#     def _update_values(**overrides):
-#         """
-#         Updates the singleton instance with new values.
-#         This is the ONLY method allowed to modify the instance.
-#         """
-#         # from glue_sdk.core.decorators.decorators import _singleton_instances,_singleton_lock
-#         with _singleton_lock:
-#             if ServicesEnabled not in _singleton_instances:
-#                 _singleton_instances[ServicesEnabled] = ServicesEnabled()
-
-#             instance = _singleton_instances[ServicesEnabled]
-#             new_instance = replace(instance, **overrides)
-#             _singleton_instances[ServicesEnabled] = new_instance
-#         return new_instance

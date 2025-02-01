@@ -5,8 +5,9 @@ from functools import cached_property
 
 from ..core.decorators.decorators import singleton
 from ..core.shared import ServicesEnabled
-from .sdk_config import SdkConfig
+from .sdk_config import SdkConf
 from ..core.master import MasterConfig
+from ..core.utils.utils import SingletonMeta
 
 if TYPE_CHECKING:
     from ..containers import ApplicationContainer
@@ -18,24 +19,21 @@ class SdkManagerError(Exception):
     pass
 
 
-@singleton
-class SdkManager:
+class SdkManager(metaclass=SingletonMeta):
     _master_config: Optional[MasterConfig]
     _container: Optional[ApplicationContainer]
     _opensearch: Optional[SdkOpenSearch]
     services_enabled: ServicesEnabled
     _sdk_cache: Optional[SdkCache]
+    _config: Optional[SdkConf]
 
-    def __init__(self, config: Optional[SdkConfig] = None) -> None:
+    def __init__(self, config: Optional[SdkConf] = None) -> None:
         self._master_config = None
         self._container = None
         self._opensearch = None
         self.services_enabled = ServicesEnabled()
 
-        if isinstance(config, SdkConfig):
-            self._config: SdkConfig = config
-        else:
-            self._config = SdkConfig()
+        self.config = config
 
     def initialize(self) -> None:
         from ..containers import ApplicationContainer
@@ -48,20 +46,20 @@ class SdkManager:
             )
 
     @property
-    def config(self) -> SdkConfig:
+    def config(self) -> SdkConf:
         """Returns the SDK configuration, initializing it if necessary."""
         if not self._config:
-            self._config = SdkConfig()
+            self.config = SdkConf()
         if not self._config:
             raise SdkManagerError("Cant initialize SdkConfig")
         return self._config
 
     @config.setter
-    def config(self, v: Optional[SdkConfig]) -> None:
-        if isinstance(v, SdkConfig):
+    def config(self, v: Optional[SdkConf]) -> None:
+        if isinstance(v, SdkConf):
             self._config = v
-        else:
-            raise SdkManagerError("Invalid configuration type")
+        # else:
+        #     raise SdkManagerError("Invalid configuration type")
 
     @property
     def container(self) -> ApplicationContainer:
