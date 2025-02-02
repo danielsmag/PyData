@@ -1,17 +1,21 @@
-from dependency_injector.wiring import inject, Provide
-from typing import Callable, TYPE_CHECKING, Any, ParamSpec, TypeVar
+from typing import List, Callable, TYPE_CHECKING, Any, ParamSpec, TypeVar
 import functools
 
 from ..core.shared import SharedUtilsSettings
 
 if TYPE_CHECKING:
-    from ..opensearch.interfaces.i_opensearch_service import IOpenSearchService
     from glue_sdk.containers.application_container import ApplicationContainer
     from ..opensearch.services.opensearch_service import OpenSearchService
     from opensearchpy import OpenSearch
 
 P = ParamSpec("P")
 R = TypeVar("R")
+
+__all__: List[str] = [
+    "opensearch_service",
+    "opensearch_service_pyspark",
+    "opensearch_service_glue",
+]
 
 shared_settings = SharedUtilsSettings()
 container: ApplicationContainer = shared_settings.container

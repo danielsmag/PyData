@@ -1,19 +1,22 @@
 from __future__ import annotations
 
 import functools
-from typing import TYPE_CHECKING, Any, Callable, ParamSpec, TypeVar
+from typing import TYPE_CHECKING, Callable, ParamSpec, TypeVar
+
 
 from ..core.shared import SharedUtilsSettings
 
 from ..cache.i_cache import ICache
 
 if TYPE_CHECKING:
-    pass
+    from glue_sdk.containers.application_container import ApplicationContainer
+
 
 P = ParamSpec("P")
 R = TypeVar("R")
 
 shared_settings = SharedUtilsSettings()
+container: ApplicationContainer = shared_settings.container
 
 
 def cache_obj(func: Callable[P, R]):
@@ -25,7 +28,7 @@ def cache_obj(func: Callable[P, R]):
 
     @functools.wraps(func)
     def wrapper(*args, **kwargs) -> R:
-        cache_obj: ICache = shared_settings.container.cache.cache()
+        cache_obj: ICache = container.cache.cache()
         kwargs["cache_obj"] = cache_obj
         # kwargs["cache_obj"] = Provide[ApplicationContainer.cache.cache]()
         return func(*args, **kwargs)
