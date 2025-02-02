@@ -16,7 +16,7 @@ R = TypeVar("R")
 shared_settings = SharedUtilsSettings()
 
 
-def cache_obj(func: Callable[P, R]) -> Callable[P, R]:
+def cache_obj(func: Callable[P, R]):
     """
     Decorator that injects the cache into the decorated function.
     Sets the 'cache' keyword argument.
@@ -24,7 +24,7 @@ def cache_obj(func: Callable[P, R]) -> Callable[P, R]:
     """
 
     @functools.wraps(func)
-    def wrapper(*args, **kwargs) -> Any:
+    def wrapper(*args, **kwargs) -> R:
         cache_obj: ICache = shared_settings.container.cache.cache()
         kwargs["cache_obj"] = cache_obj
         # kwargs["cache_obj"] = Provide[ApplicationContainer.cache.cache]()

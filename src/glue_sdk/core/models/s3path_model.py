@@ -90,3 +90,4 @@ class S3Path(BaseModel):
             else:
                 return S3Path(url=f"{self.scheme}://{self.bucket}/{key_parts[0]}/")
         return None
+    

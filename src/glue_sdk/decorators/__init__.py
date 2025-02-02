@@ -3,15 +3,17 @@ from typing import List, TYPE_CHECKING
 
 from importlib import import_module
 
-__all__: List[str] = ["cache_obj"]
+__all__: List[str] = ["cache_obj", "spark_context"]
 
 
 if TYPE_CHECKING:
     from .di_cache import cache_obj
+    from .di_core import spark_context
 
 # A mapping of {<member name>: (package, <module name>)} defining dynamic imports
 _dynamic_imports: dict[str, tuple[str, str]] = {
     "cache_obj": (__spec__.parent, ".di_cache"),
+    "spark_context": (__spec__.parent, ".di_core"),
 }
 _deprecated_dynamic_imports = set()
 

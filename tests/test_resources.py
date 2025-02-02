@@ -1,20 +1,27 @@
 from __future__ import annotations
-from opensearchpy import OpenSearch
+
 import pytest
 from glue_sdk.cache.shared_data_service import SharedDataService
 from glue_sdk.containers import ApplicationContainer
 from botocore.client import BaseClient
 from glue_sdk import SdkManager, SdkConf
 from glue_sdk.sdk.sdk_cache import SdkCache
+from glue_sdk.sdk.sdk_opensearch import SdkOpenSearch
 
 
 conf = SdkConf()
+
+
 conf.set_services_to_use(USE_CACHE=True, USE_DATA_CATALOG=True, USE_OPENSEARCH=True)
 sdk = SdkManager(config=conf)
 sdk.initialize()
+
+op_client: SdkOpenSearch = sdk.opensearch
+op_client.client
+
+
 container: ApplicationContainer = sdk.container
 container.config.override({"test": True})
-
 
 def test_cache_container():
     from glue_sdk.cache.shared_data_service import SharedDataService
@@ -30,7 +37,7 @@ def test_cache_container():
 
 
 def test_clients() -> None:
-    conf = SdkConf()
+    
     # conf.set_services_to_use(
     #     USE_CACHE=False,
     #     USE_DATA_CATALOG=False,

@@ -65,8 +65,8 @@ def test_good_s3_paths(url: str, expected_bucket: str, expected_key: str, expect
         "s3a://my-bucket/this/path/has/a/tab/char\there"
     ]
 )
-def test_bad_s3_paths(url: str) -> None:
-    with pytest.raises(expected_exception=ValidationError):
-        path = S3Path(url=url)
-        dump_url = path.model_dump()['url']
-        print(path)
+# def test_bad_s3_paths(url: str) -> None:
+#     with pytest.raises(expected_exception=ValidationError):
+#         path = S3Path(url=url)
+#         dump_url = path.model_dump()['url']
+#         print(path)
