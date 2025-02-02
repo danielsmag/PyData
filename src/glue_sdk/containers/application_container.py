@@ -16,7 +16,6 @@ class ApplicationContainer(containers.DeclarativeContainer):
     wiring_config = containers.WiringConfiguration(
         modules=[di_cache], packages=["glue_sdk"], auto_wire=True
     )
-
     config = providers.Configuration()
 
     core = providers.Container(container_cls=CoreContainer, config=config)

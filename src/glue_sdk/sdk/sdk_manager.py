@@ -4,7 +4,7 @@ from typing import Any, Dict, Optional, TYPE_CHECKING
 from functools import cached_property
 
 from ..core.decorators.decorators import singleton
-from ..core.shared import ServicesEnabled
+from ..core.shared import ServicesEnabled,SharedUtilsSettings
 from .sdk_config import SdkConf
 from ..core.master import MasterConfig
 from ..core.utils.utils import SingletonMeta
@@ -21,7 +21,6 @@ class SdkManagerError(Exception):
 
 class SdkManager(metaclass=SingletonMeta):
     _master_config: Optional[MasterConfig]
-    _container: Optional[ApplicationContainer]
     _opensearch: Optional[SdkOpenSearch]
     services_enabled: ServicesEnabled
     _sdk_cache: Optional[SdkCache]
@@ -29,24 +28,20 @@ class SdkManager(metaclass=SingletonMeta):
 
     def __init__(self, config: Optional[SdkConf] = None) -> None:
         self._master_config = None
-        self._container = None
         self._opensearch = None
         self.services_enabled = ServicesEnabled()
-
+        self.shared_settings = SharedUtilsSettings()
         self.config = config
 
     def initialize(self) -> None:
-        from glue_sdk.decorators import di_cache
         from ..containers import ApplicationContainer
-
-        self._container = ApplicationContainer()
-        self._container.reset_override()
-        self._container.wire(modules=[di_cache])
+        self.container = ApplicationContainer()
+        self.container.reset_override()
         if self.services_enabled.USE_SPARK:
             self.container.core.dynamic_configs_spark_client.override(
                 provider=self.config._spark_conf
             )
-
+                
     @property
     def config(self) -> SdkConf:
         """Returns the SDK configuration, initializing it if necessary."""
@@ -66,10 +61,14 @@ class SdkManager(metaclass=SingletonMeta):
     @property
     def container(self) -> ApplicationContainer:
         """Returns the application container, ensuring it has been initialized."""
-        if not self._container:
+        if not self.shared_settings.container:
             raise SdkManagerError("U must call initialize func firstly")
-        return self._container
+        return self.shared_settings.container
 
+    @container.setter
+    def container(self, container:ApplicationContainer) -> None:
+        self.shared_settings.container = container
+    
     @property
     def opensearch(self) -> SdkOpenSearch:
         """Returns the OpenSearch SDK, initializing it if necessary."""

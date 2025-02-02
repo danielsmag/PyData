@@ -1,6 +1,13 @@
+from __future__ import annotations
 from threading import RLock
-from functools import wraps
+from functools import wraps,cached_property
+from typing import TYPE_CHECKING, Optional,ForwardRef
+from pydantic import validate_call
 
+if TYPE_CHECKING:
+    from ..containers import ApplicationContainer
+
+ApplicationContainerRef = ForwardRef("ApplicationContainer")
 
 class SingletonMeta(type):
     """
@@ -96,3 +103,59 @@ class ServicesEnabled(metaclass=SingletonMeta):
                 f"USE_EMR={self.USE_EMR}",
             )
             return f"ServicesEnabled({', '.join(attrs)})"
+
+
+class SharedUtilsSettingsError(Exception):
+    pass
+
+class SharedUtilsSettings(metaclass=SingletonMeta):
+    _container: Optional["ApplicationContainer"]
+
+    def __init__(self):
+        self._lock = RLock()
+        self._container = None
+
+    @property
+    def container(self) -> "ApplicationContainer":
+        if not self._container:
+            raise SharedUtilsSettingsError("You must set up the container in SharedUtilsSettings.")
+        return self._container
+
+    @container.setter
+    def container(self, container: "ApplicationContainer") -> None:
+        from dependency_injector.containers import DynamicContainer
+        if not isinstance(container, DynamicContainer):
+            TypeError("U must intialize container before pass to settings")
+        #     if not isinstance(container.__self__, ApplicationContainer):  # Check parent container
+        #         raise TypeError("DynamicContainer is not based on ApplicationContainer")
+        # else:
+        #     TypeError("U must intialize container before pass to settings")
+        self._container = container
+
+    def update_values(self, **overrides):
+        with self._lock:
+            for key, value in overrides.items():
+                if hasattr(self, key):
+                    setattr(self, key, value)
+                else:
+                    raise AttributeError(
+                        f"'{key}' is not a valid attribute of SharedUtilsSettings"
+                    )
+
+    @classmethod
+    def reset(cls):
+        with SingletonMeta._lock:
+            if cls in SingletonMeta._instances:
+                del SingletonMeta._instances[cls]
+
+    def reset_to_defaults(self):
+        defaults = {} 
+        with self._lock:
+            for key, value in defaults.items():
+                setattr(self, key, value)
+
+    def __str__(self):
+        with self._lock:
+            attrs = []  
+            return f"SharedUtilsSettings({', '.join(attrs)})"
+

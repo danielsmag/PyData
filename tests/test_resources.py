@@ -66,7 +66,7 @@ def test_core_container() -> None:
     glue_context = container.core.glue_context()
     assert isinstance(glue_context, GlueContext)
 
-    # spark_client.stop()
+    spark_client.stop()
 
 
 if __name__ == "__main__":

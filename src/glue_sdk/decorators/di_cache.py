@@ -3,7 +3,7 @@ from __future__ import annotations
 import functools
 from typing import TYPE_CHECKING, Any, Callable, ParamSpec, TypeVar
 
-from glue_sdk.containers.application_container import ApplicationContainer
+from ..core.shared import SharedUtilsSettings
 
 from ..cache.i_cache import ICache
 
@@ -13,7 +13,7 @@ if TYPE_CHECKING:
 P = ParamSpec("P")
 R = TypeVar("R")
 
-container = ApplicationContainer()
+shared_settings = SharedUtilsSettings()
 
 
 def cache_obj(func: Callable[P, R]) -> Callable[P, R]:
@@ -25,10 +25,7 @@ def cache_obj(func: Callable[P, R]) -> Callable[P, R]:
 
     @functools.wraps(func)
     def wrapper(*args, **kwargs) -> Any:
-        container.cache.cache.reset_override()
-        cache_obj: ICache = container.cache.cache()
-        container.core.dynamic_configs_spark_client.reset_override()
-        print(container.core.dynamic_configs_spark_client())
+        cache_obj: ICache = shared_settings.container.cache.cache()
         kwargs["cache_obj"] = cache_obj
         # kwargs["cache_obj"] = Provide[ApplicationContainer.cache.cache]()
         return func(*args, **kwargs)
