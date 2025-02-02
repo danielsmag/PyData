@@ -11,7 +11,7 @@ if TYPE_CHECKING:
     from ..glue_data_catalog.interfaces.i_data_catalog_service import (
         IDataCatalogService,
     )
-    from ..cache.interfaces.i_cache import ICache
+    from ..cache.i_cache import ICache
     from ..aurora_pg.interfaces.i_aurora_pg_service import IAuroraPgService
     from pyspark.sql import DataFrame
 

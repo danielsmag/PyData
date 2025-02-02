@@ -1,6 +1,7 @@
 from threading import Thread
 import pytest
-from glue_sdk.cache.services.shared_data_service import SharedDataService
+from glue_sdk.cache.shared_data_service import SharedDataService
+
 
 @pytest.fixture(autouse=True)
 def reset_manager():
@@ -8,12 +9,17 @@ def reset_manager():
     manager = SharedDataService()
     manager.reset()
 
+
 def test_set_and_get():
     manager = SharedDataService()
 
     manager.set("key1", "value1")
-    assert manager.get("key1") == "value1", "Failed to retrieve the correct value for key1"
-    assert manager.get("nonexistent", default="default") == "default", "Default value not returned for nonexistent key"
+    assert (
+        manager.get("key1") == "value1"
+    ), "Failed to retrieve the correct value for key1"
+    assert (
+        manager.get("nonexistent", default="default") == "default"
+    ), "Default value not returned for nonexistent key"
 
 
 def test_concurrent_writes():
@@ -23,7 +29,9 @@ def test_concurrent_writes():
     def writer(thread_id):
         manager.set(f"key{thread_id}", f"value{thread_id}")
 
-    threads: list[Thread] = [threading.Thread(target=writer, args=(i,)) for i in range(10)]
+    threads: list[Thread] = [
+        threading.Thread(target=writer, args=(i,)) for i in range(10)
+    ]
     for thread in threads:
         thread.start()
     for thread in threads:
@@ -31,7 +39,9 @@ def test_concurrent_writes():
 
     # Verify all keys were written
     for i in range(10):
-        assert manager.get(f"key{i}") == f"value{i}", f"Key key{i} was not written correctly"
+        assert (
+            manager.get(f"key{i}") == f"value{i}"
+        ), f"Key key{i} was not written correctly"
 
 
 def test_timeout():
@@ -51,7 +61,9 @@ def test_timeout():
     thread.start()
 
     # Attempt to acquire the same lock with a timeout
-    with pytest.raises(TimeoutError, match="Failed to acquire lock for key 'key_timeout'"):
+    with pytest.raises(
+        TimeoutError, match="Failed to acquire lock for key 'key_timeout'"
+    ):
         manager.set("key_timeout", "new_value", timeout=1)
 
     thread.join()
@@ -61,7 +73,9 @@ def test_delete():
     manager = SharedDataService()
     manager.set("key_to_delete", "value_to_delete")
 
-    assert manager.get("key_to_delete") == "value_to_delete", "Failed to retrieve the key before deletion"
+    assert (
+        manager.get("key_to_delete") == "value_to_delete"
+    ), "Failed to retrieve the key before deletion"
 
     manager.delete("key_to_delete")
 
@@ -83,4 +97,7 @@ def test_all():
     manager.set("key2", "value2")
 
     all_data = manager.all()
-    assert all_data == {"key1": "value1", "key2": "value2"}, "all() did not return correct data"
+    assert all_data == {
+        "key1": "value1",
+        "key2": "value2",
+    }, "all() did not return correct data"

@@ -6,7 +6,7 @@ from typing import TYPE_CHECKING, Optional
 from ..core.decorators.decorators import singleton
 
 if TYPE_CHECKING:
-    from ..cache.services.shared_data_service import SharedDataService
+    from ..cache.shared_data_service import SharedDataService
     from ..containers import ApplicationContainer
     from ..containers.cache_container import CacheContainer
 

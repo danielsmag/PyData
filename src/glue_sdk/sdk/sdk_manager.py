@@ -36,10 +36,12 @@ class SdkManager(metaclass=SingletonMeta):
         self.config = config
 
     def initialize(self) -> None:
+        from glue_sdk.decorators import di_cache
         from ..containers import ApplicationContainer
 
         self._container = ApplicationContainer()
-
+        self._container.reset_override()
+        self._container.wire(modules=[di_cache])
         if self.services_enabled.USE_SPARK:
             self.container.core.dynamic_configs_spark_client.override(
                 provider=self.config._spark_conf

@@ -1,7 +1,7 @@
 from __future__ import annotations
 from opensearchpy import OpenSearch
 import pytest
-from glue_sdk.cache.services.shared_data_service import SharedDataService
+from glue_sdk.cache.shared_data_service import SharedDataService
 from glue_sdk.containers import ApplicationContainer
 from botocore.client import BaseClient
 from glue_sdk import SdkManager, SdkConf
@@ -17,7 +17,7 @@ container.config.override({"test": True})
 
 
 def test_cache_container():
-    from glue_sdk.cache.services.shared_data_service import SharedDataService
+    from glue_sdk.cache.shared_data_service import SharedDataService
 
     cache: SdkCache = sdk.cache
     cache_obj: SharedDataService = cache.cache_obj

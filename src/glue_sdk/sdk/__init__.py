@@ -1,19 +1,22 @@
 from __future__ import annotations
 from typing import List, TYPE_CHECKING
-from .sdk_manager import SdkManager
-from .sdk_config import SdkConf
+
 from importlib import import_module
 
-__all__: List[str] = ["SdkManager", "SdkConf"]
+__all__: List[str] = ["SdkManager", "SdkConf", "SdkOpenSearch", "SDKdDecorators"]
 
 
 if TYPE_CHECKING:
     from .sdk_manager import SdkManager
     from .sdk_config import SdkConf
-
+    from .sdk_opensearch import SdkOpenSearch
+    from .sdk_decorators import SDKdDecorators
+# A mapping of {<member name>: (package, <module name>)} defining dynamic imports
 _dynamic_imports: dict[str, tuple[str, str]] = {
     "SdkManager": (__spec__.parent, ".sdk_manager"),
     "SdkConf": (__spec__.parent, ".sdk_config"),
+    "SdkOpenSearch": (__spec__.parent, ".sdk_opensearch"),
+    "SDKdDecorators": (__spec__.parent, ".sdk_decorators"),
 }
 _deprecated_dynamic_imports = set()
 

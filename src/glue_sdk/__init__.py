@@ -5,13 +5,17 @@ from typing import List, TYPE_CHECKING
 if TYPE_CHECKING:
     from .sdk import SdkManager
     from .sdk import SdkConf
+    from .sdk import SDKdDecorators
 
-__all__: List[str] = ["SdkManager", "SdkConf"]
+__all__: List[str] = ["SDKdDecorators", "SdkManager", "SDKdDecorators", "SdkConf"]
 
+# A mapping of {<member name>: (package, <module name>)} defining dynamic imports
 _dynamic_imports: dict[str, tuple[str, str]] = {
     "SdkManager": (__spec__.parent, ".sdk"),
     "SdkConf": (__spec__.parent, ".sdk"),
+    "SDKdDecorators": (__spec__.parent, ".sdk"),
 }
+
 _deprecated_dynamic_imports = set()
 
 
