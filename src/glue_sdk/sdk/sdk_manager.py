@@ -3,8 +3,8 @@ from pydantic import validate_call
 from typing import Any, Dict, Optional, TYPE_CHECKING
 from functools import cached_property
 
-from ..core.decorators.decorators import singleton
-from ..core.shared import ServicesEnabled,SharedUtilsSettings
+
+from ..core.shared import ServicesEnabled, SharedUtilsSettings
 from .sdk_config import SdkConf
 from ..core.master import MasterConfig
 from ..core.utils.utils import SingletonMeta
@@ -35,13 +35,14 @@ class SdkManager(metaclass=SingletonMeta):
 
     def initialize(self) -> None:
         from ..containers import ApplicationContainer
+
         self.container = ApplicationContainer()
         self.container.reset_override()
         if self.services_enabled.USE_SPARK:
             self.container.core.dynamic_configs_spark_client.override(
                 provider=self.config._spark_conf
             )
-                
+
     @property
     def config(self) -> SdkConf:
         """Returns the SDK configuration, initializing it if necessary."""
@@ -66,9 +67,9 @@ class SdkManager(metaclass=SingletonMeta):
         return self._shared_settings.container
 
     @container.setter
-    def container(self, container:ApplicationContainer) -> None:
+    def container(self, container: ApplicationContainer) -> None:
         self._shared_settings.container = container
-    
+
     @property
     def opensearch(self) -> SdkOpenSearch:
         """Returns the OpenSearch SDK, initializing it if necessary."""
@@ -88,5 +89,7 @@ class SdkManager(metaclass=SingletonMeta):
 
         if not self.services_enabled.USE_CACHE:
             raise SdkManagerError("U have to enable Cache resource")
-        self._sdk_cache = SdkCache(container=self.container,services_enabled=self.services_enabled)
+        self._sdk_cache = SdkCache(
+            container=self.container, services_enabled=self.services_enabled
+        )
         return self._sdk_cache
