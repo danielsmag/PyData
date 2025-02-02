@@ -5,20 +5,23 @@ from typing import TYPE_CHECKING, Optional
 from ..core.utils.utils import SingletonMeta
 
 if TYPE_CHECKING:
-    from ..cache.shared_data_service import SharedDataService
     from ..containers import ApplicationContainer
-    from ..containers.cache_container import CacheContainer
-
-
+    from ..core.shared import ServicesEnabled
+    from ..glue_data_catalog.data_catalog_service import DataCatalogService
+    
+    
 class SDKDataCatalogError(Exception):
     pass
 
 
 class SDKDataCatalog(metaclass=SingletonMeta):
-    def __init__(self, container: ApplicationContainer) -> None:
-        self.container: ApplicationContainer = container
-        self._cache_container: Optional[CacheContainer] = None
+    def __init__(self,
+                services_enabled: ServicesEnabled,
+                container: ApplicationContainer 
+                ) -> None:
+        self._services_enabled: ServicesEnabled = services_enabled
+        self._container: ApplicationContainer = container
 
     @cached_property
-    def cache_obj(self) -> "SharedDataService":
-        return self.container.cache.cache()
+    def data_catalog_service(self) -> DataCatalogService:
+        return self._container.data_catalog.data_catalog_service()

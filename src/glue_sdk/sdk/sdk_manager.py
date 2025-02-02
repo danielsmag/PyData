@@ -61,13 +61,13 @@ class SdkManager(metaclass=SingletonMeta):
     @property
     def container(self) -> ApplicationContainer:
         """Returns the application container, ensuring it has been initialized."""
-        if not self.shared_settings.container:
+        if not self._shared_settings.container:
             raise SdkManagerError("U must call initialize func firstly")
-        return self.shared_settings.container
+        return self._shared_settings.container
 
     @container.setter
     def container(self, container:ApplicationContainer) -> None:
-        self.shared_settings.container = container
+        self._shared_settings.container = container
     
     @property
     def opensearch(self) -> SdkOpenSearch:
@@ -88,5 +88,5 @@ class SdkManager(metaclass=SingletonMeta):
 
         if not self.services_enabled.USE_CACHE:
             raise SdkManagerError("U have to enable Cache resource")
-        self._sdk_cache = SdkCache(container=self.container)
+        self._sdk_cache = SdkCache(container=self.container,services_enabled=self.services_enabled)
         return self._sdk_cache
