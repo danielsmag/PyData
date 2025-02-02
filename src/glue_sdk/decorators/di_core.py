@@ -47,7 +47,6 @@ def spark_context(func: Callable):
     """
     from glue_sdk.containers.application_container import ApplicationContainer
 
-    @inject
     @functools.wraps(func)
     def wrapper(
         *args,
