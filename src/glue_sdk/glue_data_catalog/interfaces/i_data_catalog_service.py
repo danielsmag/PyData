@@ -5,7 +5,7 @@ from ...core.interfaces.i_base_service import IBaseService
 
 
 if TYPE_CHECKING:
-    from ..models.data_catalog_model import DataCatalogDatabase,DataCatalogTable
+    from ..data_catalog_model import DataCatalogDatabase,DataCatalogTable
     from awsglue import DynamicFrame
 class IDataCatalogService(IBaseService,ABC):
     

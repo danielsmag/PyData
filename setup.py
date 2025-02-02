@@ -21,7 +21,7 @@ setup(
     ],
     python_requires=">=3.10.0",
     install_requires=[
-        'psycopg2-binary>=2.9.9',
+        'psycopg2-binary>=2.9.10',
         'pydantic>=2.10.4',
         'pydantic-settings>=2.7.0',
         'dependency-injector>=4.44.0',

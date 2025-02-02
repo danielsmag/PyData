@@ -1,9 +1,9 @@
 from __future__ import annotations
 from botocore.exceptions import ClientError
 from typing import Optional, Any, List, Literal, Dict, TYPE_CHECKING, Union
-from ...core.services.base_service import BaseService
-from ..models.data_catalog_model import DataCatalogDatabase, DataCatalogTable
-from ..interfaces.i_data_catalog_service import IDataCatalogService
+from ..core.services.base_service import BaseService
+from .data_catalog_model import DataCatalogDatabase, DataCatalogTable
+from .interfaces.i_data_catalog_service import IDataCatalogService
 
 if TYPE_CHECKING:
     from botocore.client import BaseClient

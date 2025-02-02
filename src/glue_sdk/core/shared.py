@@ -126,10 +126,6 @@ class SharedUtilsSettings(metaclass=SingletonMeta):
         from dependency_injector.containers import DynamicContainer
         if not isinstance(container, DynamicContainer):
             TypeError("U must intialize container before pass to settings")
-        #     if not isinstance(container.__self__, ApplicationContainer):  # Check parent container
-        #         raise TypeError("DynamicContainer is not based on ApplicationContainer")
-        # else:
-        #     TypeError("U must intialize container before pass to settings")
         self._container = container
 
     def update_values(self, **overrides):

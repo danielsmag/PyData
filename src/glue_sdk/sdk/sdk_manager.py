@@ -30,7 +30,7 @@ class SdkManager(metaclass=SingletonMeta):
         self._master_config = None
         self._opensearch = None
         self.services_enabled = ServicesEnabled()
-        self.shared_settings = SharedUtilsSettings()
+        self._shared_settings = SharedUtilsSettings()
         self.config = config
 
     def initialize(self) -> None:
