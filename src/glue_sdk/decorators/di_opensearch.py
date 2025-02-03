@@ -5,7 +5,7 @@ from ..core.shared import SharedUtilsSettings
 
 if TYPE_CHECKING:
     from glue_sdk.containers.application_container import ApplicationContainer
-    from ..opensearch.services.opensearch_service import OpenSearchService
+    from ..opensearch.opensearch_service import OpenSearchService
     from opensearchpy import OpenSearch
 
 P = ParamSpec("P")
@@ -18,7 +18,6 @@ __all__: List[str] = [
 ]
 
 shared_settings = SharedUtilsSettings()
-container: ApplicationContainer = shared_settings.container
 
 
 def opensearch_service(func: Callable):
@@ -30,6 +29,7 @@ def opensearch_service(func: Callable):
 
     @functools.wraps(func)
     def wrapper(*args, **kwargs) -> Any:
+        container: ApplicationContainer = shared_settings.container
         opensearch_service = container.opensearch.opensearch_service()
         kwargs["opensearch_service"] = opensearch_service
         return func(*args, **kwargs)
@@ -46,11 +46,12 @@ def opensearch_service_pyspark(func: Callable):
 
     @functools.wraps(func)
     def wrapper(*args, **kwargs) -> Any:
-        opensearch_service_pyspark: OpenSearchService = (
+        container: ApplicationContainer = shared_settings.container
+        opensearch_service: OpenSearchService = (
             container.opensearch.opensearch_service()
         )
-        opensearch_service_pyspark.worker_mode = "pyspark"
-        kwargs["opensearch_service_pyspark"] = opensearch_service_pyspark
+        opensearch_service.set_worker_mode(worker_mode="pyspark")
+        kwargs["opensearch_service_pyspark"] = opensearch_service
         return func(*args, **kwargs)
 
     return wrapper
@@ -65,11 +66,12 @@ def opensearch_service_glue(func: Callable):
 
     @functools.wraps(func)
     def wrapper(*args, **kwargs) -> Any:
-        opensearch_service_glue: OpenSearchService = (
+        container: ApplicationContainer = shared_settings.container
+        opensearch_service: OpenSearchService = (
             container.opensearch.opensearch_service()
         )
-        opensearch_service_glue.worker_mode = "glue"
-        kwargs["opensearch_service_glue"] = opensearch_service_glue
+        opensearch_service.set_worker_mode(worker_mode="glue")
+        kwargs["opensearch_service_glue"] = opensearch_service
         return func(*args, **kwargs)
 
     return wrapper
@@ -84,6 +86,7 @@ def opensearch_client(func: Callable):
 
     @functools.wraps(func)
     def wrapper(*args, **kwargs) -> Any:
+        container: ApplicationContainer = shared_settings.container
         opensearch_client: OpenSearch = container.opensearch.opensearch_client()
         kwargs["opensearch_client"] = opensearch_client
         return func(*args, **kwargs)

@@ -1,14 +1,14 @@
 from __future__ import annotations
 from typing import Dict, List, Optional, Tuple, Literal, TYPE_CHECKING
 from pyspark.sql import DataFrame
-from ...core.services.base_service import BaseService
-from ..interfaces.i_opensearch_service import IOpenSearchService
-from ...core.logging.logger import logger
+from ..core.services.base_service import BaseService
+from .interfaces.i_opensearch_service import IOpenSearchService
+from ..core.logging.logger import logger
 from glue_sdk.core.shared import ServicesEnabled
-
+from pydantic import validate_call
 
 if TYPE_CHECKING:
-    from ..interfaces.i_opensearch_worker import IOpenSearchWorker
+    from .interfaces.i_opensearch_worker import IOpenSearchWorker
     from opensearchpy import OpenSearch
 
 aws_services_to_use = ServicesEnabled()
@@ -53,13 +53,9 @@ class OpenSearchService(IOpenSearchService, BaseService):
     def worker_mode(self) -> Literal["glue", "pyspark"]:
         return self._worker_mode
 
-    @worker_mode.setter
-    def worker_mode(self, v: Literal["glue", "pyspark"]) -> None:
-        if v not in ["glue", "pyspark"]:
-            raise OpenSearchServiceError(
-                "U provide illegal value to worker mode , value can be in [glue,pyspark]"
-            )
-        self._worker_mode = v
+    @validate_call
+    def set_worker_mode(self, worker_mode: Literal["glue", "pyspark"]) -> None:
+        self._worker_mode = worker_mode
 
     def load_data(
         self,

@@ -1,101 +1,105 @@
+from __future__ import annotations
+from typing import List, Literal, Dict, Optional, Any, TYPE_CHECKING
+
 from ..interfaces.i_opensearch_worker import IOpenSearchWorker
-from pyspark.sql import DataFrame
-from typing import List,Literal, Dict
 from ...core.logging.logger import logger
 
-from pyspark.sql import DataFrame
-from typing import Optional, Literal
+if TYPE_CHECKING:
+    from pyspark.sql import DataFrame
 
-__all__:List[str] = ["OpenSearchPySparkWorker"]
+__all__: List[str] = ["OpenSearchPySparkWorker"]
+
 
 class OpenSearchPySparkWorker(IOpenSearchWorker):
     """
-    Worker to load data from PySpark DataFrame to OpenSearch.
+    Worker to load data from a PySpark DataFrame to OpenSearch.
     """
-    def __init__(self,
-                 opensearch_config: Dict,
-                 host: str,
-                 username: str,
-                 password: str,
-                 port: int = 9200) -> None:
+
+    def __init__(
+        self,
+        opensearch_config: Dict[str, Any],
+        host: str,
+        username: str,
+        password: str,
+        port: int = 9200,
+    ) -> None:
         """
         Initialize the OpenSearchPySparkWorker.
 
         Args:
+            opensearch_config (Dict[str, Any]): Extra settings for the connector.
             host (str): OpenSearch host.
             username (str): Authentication username.
             password (str): Authentication password.
             port (int, optional): OpenSearch port. Defaults to 9200.
         """
         super().__init__()
-        self.host = host
-        self._username = username
-        self._password = password
-        self.port = port
-        self.opensearch_config: Dict =opensearch_config
-        
+        self.host: str = host
+        self._username: str = username
+        self._password: str = password
+        self.port: int = port
+        self.opensearch_config: Dict[str, Any] = opensearch_config
+
     def load_data(
         self,
         df: DataFrame,
         index: str,
         mode: Literal["overwrite", "append", "ignore", "errorifexists"] = "overwrite",
-        es_batch_size_entries: Optional[int] = None,
-        es_batch_size_bytes: Optional[str] = None,
-        es_nodes_wan_only: Optional[str] = "true",
+        opensearch_batch_size_entries: Optional[int] = None,
+        opensearch_batch_size_bytes: Optional[str] = None,
+        opensearch_nodes_wan_only: Optional[str] = "true",
         opensearch_mapping_id: Optional[str] = None,
-
     ) -> bool:
         """
-        Load data into OpenSearch index from PySpark DataFrame.
+        Load data into an OpenSearch index from a PySpark DataFrame.
 
         Args:
             df (DataFrame): The PySpark DataFrame to write to OpenSearch.
-            index (str): The OpenSearch index to write data to.
-            connection_name (Optional[str]): Connection name (if applicable) for use glue connection.
-            es_batch_size_entries (Optional[int]): Batch size (entries).
-            es_batch_size_bytes (Optional[str]): Batch size (bytes).
-            es_nodes_wan_only (Optional[str]): WAN-only mode. Defaults to "true".
-            opensearch_mapping_id (Optional[str]): Mapping ID for OpenSearch.
-            mode (Literal["overwrite", "append", "ignore", "errorifexists"]): Save mode. Defaults to "overwrite".
-            pushdown (Optional[bool]): Enable pushdown. Defaults to None.
+            index (str): The target OpenSearch index.
+            mode (Literal[...]): Save mode (defaults to "overwrite").
+            opensearch_batch_size_entries (Optional[int]): Maximum number of documents per bulk request.
+            opensearch_batch_size_bytes (Optional[str]): Maximum batch size in bytes per bulk request.
+            opensearch_nodes_wan_only (Optional[str]): WAN-only mode setting (defaults to "true").
+            opensearch_mapping_id (Optional[str]): Field name to be used as the document ID.
 
         Returns:
             bool: True if data is successfully written, False otherwise.
         """
         try:
-            assert isinstance(df,DataFrame)
-            es_batch_size_entries = self.opensearch_config.get("opensearch_batch_size_entries")
-            es_batch_size_bytes = self.opensearch_config.get("opensearch_batch_size_bytes")
-            es_nodes_wan_only= self.opensearch_config.get("es_nodes_wan_only","true")
-            pushdown: str =  self.opensearch_config.get("pushdown","true")
+            from pyspark.sql import DataFrame
 
-            
-            options: Dict = {
-                "es.nodes": self.host,
-                "es.port": str(self.port),
-                "es.net.http.auth.user": self._username,
-                "es.net.http.auth.pass": self._password,
-                "es.resource": index,
+            assert isinstance(df, DataFrame)
+
+            full_host: str = f"{self.host}:{self.port}"
+            if not full_host.startswith("https://"):
+                full_host = "https://" + full_host
+
+            options: Dict[str, Any] = {
+                "opensearch.nodes": full_host,
+                "opensearch.username": self._username,
+                "opensearch.password": self._password,
+                "opensearch.resource": index,
             }
 
-           
-            if es_batch_size_entries:
-                options["es.batch.size.entries"] = str(es_batch_size_entries)
-            if es_batch_size_bytes:
-                options["es.batch.size.bytes"] = es_batch_size_bytes
-            if pushdown is not None:
-                options["es.pushdown"] = str(pushdown).lower()
-            if es_nodes_wan_only:
-                options["es.nodes.wan.only"] = es_nodes_wan_only
+            if self.opensearch_config:
+                options.update(self.opensearch_config)
+
+            if opensearch_batch_size_entries is not None:
+                options["opensearch.batch.size.entries"] = str(
+                    opensearch_batch_size_entries
+                )
+            if opensearch_batch_size_bytes is not None:
+                options["opensearch.batch.size.bytes"] = opensearch_batch_size_bytes
+            if opensearch_nodes_wan_only is not None:
+                options["opensearch.nodes.wan.only"] = opensearch_nodes_wan_only
             if opensearch_mapping_id:
-                options['es.mapping.id'] =opensearch_mapping_id    
-                
-            logger.debug(f"open search connection options: {options}")
-            (df.write 
-                .format("org.elasticsearch.spark.sql") 
-                .options(**options) 
-                .mode(mode) 
-                .save())
+                options["opensearch.mapping.id"] = opensearch_mapping_id
+
+            logger.debug(f"OpenSearch connection options: {options}")
+
+            df.write.format(source="opensearch").options(**options).mode(
+                saveMode=mode
+            ).save()
 
             return True
 

@@ -1,13 +1,13 @@
 from __future__ import annotations
 from threading import RLock
-from functools import wraps,cached_property
-from typing import TYPE_CHECKING, Optional,ForwardRef
-from pydantic import validate_call
+from typing import TYPE_CHECKING, Optional, ForwardRef
+
 
 if TYPE_CHECKING:
     from ..containers import ApplicationContainer
 
 ApplicationContainerRef = ForwardRef("ApplicationContainer")
+
 
 class SingletonMeta(type):
     """
@@ -108,24 +108,38 @@ class ServicesEnabled(metaclass=SingletonMeta):
 class SharedUtilsSettingsError(Exception):
     pass
 
+
 class SharedUtilsSettings(metaclass=SingletonMeta):
     _container: Optional["ApplicationContainer"]
+    _test_mode: bool
 
     def __init__(self):
         self._lock = RLock()
         self._container = None
+        self._test_mode = False
 
     @property
     def container(self) -> "ApplicationContainer":
         if not self._container:
-            raise SharedUtilsSettingsError("You must set up the container in SharedUtilsSettings.")
+            raise SharedUtilsSettingsError(
+                "You must set up the container in SharedUtilsSettings."
+            )
         return self._container
+
+    @property
+    def test_mode(self) -> bool:
+        return self._test_mode
+
+    def set_test_mode(self, mode: bool = False) -> None:
+        assert isinstance(mode, bool), "set_test_mode must provide bool to mode"
+        self._test_mode = mode
 
     @container.setter
     def container(self, container: "ApplicationContainer") -> None:
         from dependency_injector.containers import DynamicContainer
+
         if not isinstance(container, DynamicContainer):
-            TypeError("U must intialize container before pass to settings")
+            TypeError("U must initialize container before pass to settings")
         self._container = container
 
     def update_values(self, **overrides):
@@ -145,13 +159,12 @@ class SharedUtilsSettings(metaclass=SingletonMeta):
                 del SingletonMeta._instances[cls]
 
     def reset_to_defaults(self):
-        defaults = {} 
+        defaults = {}
         with self._lock:
             for key, value in defaults.items():
                 setattr(self, key, value)
 
     def __str__(self):
         with self._lock:
-            attrs = []  
+            attrs = []
             return f"SharedUtilsSettings({', '.join(attrs)})"
-

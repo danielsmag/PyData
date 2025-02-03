@@ -1,36 +1,41 @@
 from typing import List, TYPE_CHECKING
 import importlib
-from .services.opensearch_service import OpenSearchService
+from .opensearch_service import OpenSearchService
 
 if TYPE_CHECKING:
-    from .clients.opensearch_client import OpenSearchClient
-    from .services.opensearch_service import OpenSearchService
+    from .opensearch_client import OpenSearchClient
+    from .opensearch_service import OpenSearchService
     from .workers.opensearch_glue_worker import OpenSearchGlueWorker
     from .workers.opensearch_pyspark_worker import OpenSearchPySparkWorker
-    
-    
+
+
 __all__: List[str] = [
     "OpenSearchClient",
     "OpenSearchService",
     "OpenSearchPySparkWorker",
-    "OpenSearchGlueWorker"
+    "OpenSearchGlueWorker",
 ]
+
 
 def __getattr__(name: str):
     if name in __all__:
         match name:
             case "OpenSearchClient":
-                submod = importlib.import_module('.clients.opensearch_client', __name__)
+                submod = importlib.import_module(".opensearch_client", __name__)
                 attr = submod.OpenSearchClient
             case "OpenSearchService":
-                submod = importlib.import_module('.services.opensearch_service', __name__)
+                submod = importlib.import_module(".opensearch_service", __name__)
                 attr = submod.OpenSearchService
             case "OpenSearchPySparkWorker" | "OpenSearchGlueWorker":
                 if name == "OpenSearchPySparkWorker":
-                    submod = importlib.import_module('.workers.opensearch_pyspark_worker', __name__)
+                    submod = importlib.import_module(
+                        ".workers.opensearch_pyspark_worker", __name__
+                    )
                     attr = submod.OpenSearchPySparkWorker
                 else:
-                    submod = importlib.import_module('.workers.opensearch_glue_worker', __name__)
+                    submod = importlib.import_module(
+                        ".workers.opensearch_glue_worker", __name__
+                    )
                     attr = submod.OpenSearchGlueWorker
             case _:
                 raise AttributeError(f"Module {__name__} has no attribute {name}")
@@ -39,6 +44,7 @@ def __getattr__(name: str):
         return attr
 
     raise AttributeError(f"Module {__name__} has no attribute {name}")
+
 
 def __dir__() -> List[str]:
     return list(globals().keys()) + __all__

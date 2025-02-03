@@ -1,6 +1,5 @@
 from __future__ import annotations
-from pydantic import validate_call
-from typing import Any, Dict, Optional, TYPE_CHECKING
+from typing import Optional, TYPE_CHECKING
 from functools import cached_property
 
 
@@ -37,11 +36,11 @@ class SdkManager(metaclass=SingletonMeta):
         from ..containers import ApplicationContainer
 
         self.container = ApplicationContainer()
-        self.container.reset_override()
         if self.services_enabled.USE_SPARK:
             self.container.core.dynamic_configs_spark_client.override(
                 provider=self.config._spark_conf
             )
+        self.container.config.override(self.config._conf)
 
     @property
     def config(self) -> SdkConf:
@@ -75,7 +74,7 @@ class SdkManager(metaclass=SingletonMeta):
         """Returns the OpenSearch SDK, initializing it if necessary."""
         from .sdk_opensearch import SdkOpenSearch
 
-        if not self.config.USE_OPENSEARCH:
+        if not self.services_enabled.USE_CACHE:
             raise SdkManagerError("U have to enable OpenSearch resource")
         if not self._opensearch:
             self._opensearch = SdkOpenSearch(container=self.container)
@@ -93,3 +92,6 @@ class SdkManager(metaclass=SingletonMeta):
             container=self.container, services_enabled=self.services_enabled
         )
         return self._sdk_cache
+
+    def set_test_mode(self):
+        self._shared_settings.set_test_mode(mode=True)

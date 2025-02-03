@@ -1,11 +1,10 @@
-
-from typing import Optional,Dict,List, Any
-import json
+from typing import List
 from pydantic import BaseModel, model_validator, ConfigDict
+
 
 class Secrets(BaseModel):
     model_config = ConfigDict(frozen=True)
-    
+
     secret_name: str
     username: str = ""
     password: str = ""
@@ -23,4 +22,4 @@ class Secrets(BaseModel):
         if missing:
             raise ValueError(f"Missing required fields: {', '.join(missing)}")
 
-        return self 
+        return self

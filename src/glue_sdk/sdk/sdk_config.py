@@ -12,9 +12,11 @@ class SdkConfigError(Exception):
 
 
 class SdkConf(metaclass=SingletonMeta):
+    _conf: Optional[Dict]
+
     def __init__(self, services_enabled: Optional[ServicesEnabled] = None) -> None:
         self.services_enabled: ServicesEnabled = services_enabled or ServicesEnabled()
-        self._conf: Optional[Dict] = None
+        self._conf = {}
         self._spark_conf: Dict = {}
         self._initialized = True
 
@@ -54,11 +56,18 @@ class SdkConf(metaclass=SingletonMeta):
         )
 
     @validate_call
-    def set_config_application(self, config_data: Dict = {}) -> None:
+    def set_config_app_from_dict(self, config_data: Dict = {}) -> None:
         """Set main configuration for the SDK."""
         validate_config = MasterConfig(**config_data)
         self._master_config: MasterConfig = validate_config
         self._conf = validate_config.model_dump()
+
+    @property
+    def config_app(self) -> MasterConfig:
+        if self._master_config is None:
+            SdkConfigError("conf app is not set up")
+        assert isinstance(self._conf, Dict)
+        return self._master_config
 
     @validate_call
     def set_spark_conf(self, config_data: Dict = {}) -> None:

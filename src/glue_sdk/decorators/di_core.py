@@ -22,7 +22,6 @@ P = ParamSpec("P")
 R = TypeVar("R")
 
 shared_settings = SharedUtilsSettings()
-container: ApplicationContainer = shared_settings.container
 
 
 def spark_session(func: Callable):
@@ -33,6 +32,7 @@ def spark_session(func: Callable):
 
     @functools.wraps(func)
     def wrapper(*args, **kwargs) -> Any:
+        container: ApplicationContainer = shared_settings.container
         spark_session = container.core.spark_session()
         kwargs["spark_session"] = spark_session
         return func(*args, **kwargs)

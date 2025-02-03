@@ -4,23 +4,33 @@ from pydantic import Field, field_validator
 from typing import Optional, TYPE_CHECKING, List, Dict, Any
 from ..core.cache.config import CacheConfig
 from ..core.base import Sources, Output
-from .config_loader import ConfigLoader
 from ..core.logging.logger import logger
-from .decorators.decorators import singleton
-
-if TYPE_CHECKING:
-    from glue_sdk.core.opensearch.config import OpenSearchConfig
+from glue_sdk.core.opensearch.config import OpenSearchConfig
+import threading
 
 
-@singleton
-class MasterConfig(BaseSettings):
+class SingletonMeta(type(BaseSettings)):
+    _instances = {}
+    _lock = threading.Lock()  # Class-level lock for thread safety.
+
+    def __call__(cls, *args, **kwargs):
+        # First check without acquiring the lock.
+        if cls not in cls._instances:
+            with cls._lock:
+                # Double-check within the lock.
+                if cls not in cls._instances:
+                    cls._instances[cls] = super().__call__(*args, **kwargs)
+        return cls._instances[cls]
+
+
+class MasterConfig(BaseSettings, metaclass=SingletonMeta):
     model_config = SettingsConfigDict(frozen=False, case_sensitive=False, extra="allow")
     app_name: str = Field(default="default_app_name")
     env: str = Field(
         default="", description="Environment (e.g., dev, prod, staging, local)"
     )
     version: str = Field(default="", description="Version of the configuration")
-    opensearch: Optional["OpenSearchConfig"] = Field(
+    opensearch: Optional[OpenSearchConfig] = Field(
         default=None, description="Opensearch settings"
     )
     aws_region: str = Field(default="eu-west-1", description="AWS region")

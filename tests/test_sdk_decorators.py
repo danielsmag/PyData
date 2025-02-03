@@ -9,16 +9,16 @@ if TYPE_CHECKING:
     from glue_sdk.containers.application_container import ApplicationContainer
 
 
-SdkConf.reset()
-config = SdkConf()
-config.set_spark_conf({"test": 123})
-config.set_services_to_use(USE_CACHE=True, USE_SPARK=True)
-sdk_main = SdkManager(config=config)
-sdk_main.initialize()
-container: ApplicationContainer = sdk_main.container
-# container.wire(modules=[di_cache])
+# SdkConf.reset()
+# config = SdkConf()
+# config.set_spark_conf(config_data={"test": 123})
+# config.set_services_to_use(USE_CACHE=True, USE_SPARK=True)
+# sdk_main = SdkManager(config=config)
+# sdk_main.initialize()
+# container: ApplicationContainer = sdk_main.container
+# # container.wire(modules=[di_cache])
 
-d = SDKdDecorators()
+# d = SDKdDecorators()
 
 # cache_obj = d.cache_obj
 # Set up configuration

@@ -8,15 +8,15 @@ from .spark_container import SparkContainer
 from .aurora_pg_container import AuroraPgContainer
 from .data_builders_container import DataBuilderContainer
 from .general_container import GeneralContainer
-from glue_sdk.decorators import di_cache
 
 
 class ApplicationContainer(containers.DeclarativeContainer):
 
-    wiring_config = containers.WiringConfiguration(
-        modules=[di_cache], packages=["glue_sdk"], auto_wire=True
-    )
+    # wiring_config = containers.WiringConfiguration(
+    #     modules=[di_cache], packages=["glue_sdk"], auto_wire=True
+    # )
     config = providers.Configuration()
+    # config = providers.Factory(provides=lambda: {"test": 555})
 
     core = providers.Container(container_cls=CoreContainer, config=config)
 
@@ -33,11 +33,14 @@ class ApplicationContainer(containers.DeclarativeContainer):
     )
 
     opensearch = providers.Container(
-        container_cls=OpenSearchContainer, config=config.opensearch, core=core
+        container_cls=OpenSearchContainer,
+        general=general,
+        config=config.opensearch,
+        core=core,
     )
 
     aurora_pg = providers.Container(
-        container_cls=AuroraPgContainer, config=config.aurora_pg, core=core
+        container_cls=AuroraPgContainer, config=config.provided.aurora_pg, core=core
     )
 
     # data_builders = providers.Container(

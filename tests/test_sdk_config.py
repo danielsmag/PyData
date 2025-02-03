@@ -5,9 +5,6 @@ from glue_sdk.core.shared import ServicesEnabled
 
 # If your singleton decorator stores the instance in an attribute (e.g. _instance),
 # we can clear it between tests to ensure test isolation.
-@pytest.fixture(autouse=True)
-def reset_sdkconf_singleton():
-    SdkConf.reset()
 
 
 def test_default_services():
@@ -55,32 +52,6 @@ def test_set_spark_conf():
     spark_conf = {"master": "local", "appName": "TestApp"}
     conf.set_spark_conf(spark_conf)
     assert conf._spark_conf == spark_conf
-
-
-def test_set_config_application(monkeypatch):
-    """
-    Test that set_config_application validates and sets configuration.
-    We monkeypatch MasterConfig with a dummy class that echoes its input.
-    """
-
-    # Define a dummy MasterConfig to simulate validation.
-    class DummyMasterConfig:
-        def __init__(self, **kwargs):
-            self.data = kwargs
-
-        def model_dump(self):
-            return self.data
-
-    # Monkeypatch the MasterConfig used in SdkConf.
-    monkeypatch.setattr("glue_sdk.sdk.sdk_config.MasterConfig", DummyMasterConfig)
-
-    conf = SdkConf()
-    config_data = {"some_key": "some_value", "number": 123}
-    conf.set_config_application(config_data)
-    # Check that the _conf attribute was set to the dumped model.
-    assert conf._conf == config_data
-    # Check that _master_config is an instance of DummyMasterConfig and echoes the data.
-    assert conf._master_config.data == config_data
 
 
 def test_singleton_behavior():

@@ -16,7 +16,6 @@ P = ParamSpec("P")
 R = TypeVar("R")
 
 shared_settings = SharedUtilsSettings()
-container: ApplicationContainer = shared_settings.container
 
 
 def cache_obj(func: Callable[P, R]):
@@ -28,6 +27,7 @@ def cache_obj(func: Callable[P, R]):
 
     @functools.wraps(func)
     def wrapper(*args, **kwargs) -> R:
+        container: ApplicationContainer = shared_settings.container
         cache_obj: ICache = container.cache.cache()
         kwargs["cache_obj"] = cache_obj
         # kwargs["cache_obj"] = Provide[ApplicationContainer.cache.cache]()
